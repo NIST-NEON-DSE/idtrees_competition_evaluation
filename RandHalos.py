@@ -98,7 +98,7 @@ def get_halo_indices(corners,im):
 
 
 def TestDet(par):
-    return np.array([200,250,GT[2]+2*par['edge'],GT[3]+2*par['edge']])
+    return np.array([200,250,2*par['edge'],2*par['edge']])
 #    return GT
     
 def get_det_indices(det):
@@ -127,8 +127,7 @@ def RandNeon(GT,detection,im,par):
     
     #compute b
     edge_wo = halos['edge'].difference(halos['outer'])
-    det_edge = det.intersection(halos['edge'])
-    b_set = edge_wo.difference(det_edge)
+    b_set = det.intersection(edge_wo)
     b = len(b_set)**2
     
     #compute c

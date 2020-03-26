@@ -127,7 +127,7 @@ def RandNeon(GT,detection,im,par):
     
     #compute b
     edge_wo = halos['edge'].difference(halos['outer'])
-    b_set = det.intersection(edge_wo)
+    b_set = edge_wo.difference(det)
     b = len(b_set)**2
     
     #compute c

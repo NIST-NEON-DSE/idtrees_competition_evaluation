@@ -136,8 +136,7 @@ def RandNeon(GT,detection,im,par):
     c = len(c_set)**2
     
     #compute d
-    det_in = det.intersection(halos['inner'])
-    d_set = halos['inner'].difference(det_in)
+    d_set = halos['inner'].difference(det)
     d = len(d_set)**2
     
     #plot detection

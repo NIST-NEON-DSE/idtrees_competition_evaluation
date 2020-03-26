@@ -13,7 +13,7 @@ from PIL import Image
 
 im = Image.open('C:\\Users\\d.stewart\\NAVYREPO\\2020_NEON_Competition\\idtrees_competition_evaluation\\SJER_012.tif')
 GT = sio.loadmat('C:\\Users\\d.stewart\\NAVYREPO\\2020_NEON_Competition\\idtrees_competition_evaluation\\SJER12GT.mat')
-GT = GT['GT'][0]
+GT = GT['GT'][0].astype(int)
 
 def halo_parameters(Nout,Nin,Nedge):
     par = {}
@@ -69,8 +69,8 @@ def get_halo_indices(corners,im):
     
     #get inner
     inxywh = corners['inner']
-    x = np.arange(inxywh[0], inxywh[0]+GT[2], 1)
-    y = np.arange(inxywh[1], inxywh[1]+GT[3], 1)
+    x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
+    y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
     indices = np.ravel_multi_index(XY,np.size(im))
@@ -78,8 +78,8 @@ def get_halo_indices(corners,im):
     
     #get outer
     inxywh = corners['outer']
-    x = np.arange(inxywh[0], inxywh[0]+GT[2], 1)
-    y = np.arange(inxywh[1], inxywh[1]+GT[3], 1)
+    x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
+    y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
     indices = np.ravel_multi_index(XY,np.size(im))
@@ -87,8 +87,8 @@ def get_halo_indices(corners,im):
     
     #get edge
     inxywh = corners['edge']
-    x = np.arange(inxywh[0], inxywh[0]+GT[2], 1)
-    y = np.arange(inxywh[1], inxywh[1]+GT[3], 1)
+    x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
+    y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
     indices = np.ravel_multi_index(XY,np.size(im))
@@ -98,7 +98,7 @@ def get_halo_indices(corners,im):
 
 
 def TestDet(par):
-    return np.array([200,250,GT[2]+2*par['edge'],GT[3]+2*par['edge']])
+    return np.array([200,250,2*par['edge'],2*par['edge']])
 #    return GT
     
 def get_det_indices(det):
@@ -106,8 +106,8 @@ def get_det_indices(det):
     y = np.arange(det[1], det[1]+det[3], 1)
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = set(np.ravel_multi_index(XY,np.size(im)))
-    return indices
+    indices = np.ravel_multi_index(XY,np.size(im))
+    return set(indices)
     
 
 def RandNeon(GT,detection,im,par):
@@ -127,8 +127,7 @@ def RandNeon(GT,detection,im,par):
     
     #compute b
     edge_wo = halos['edge'].difference(halos['outer'])
-    det_edge = det.intersection(halos['edge'])
-    b_set = edge_wo.difference(det_edge)
+    b_set = edge_wo.difference(det)
     b = len(b_set)**2
     
     #compute c
@@ -145,7 +144,7 @@ def RandNeon(GT,detection,im,par):
     if par['plot']:
         rectDet = pat.Rectangle((detection[0],detection[1]),detection[2],detection[3],linewidth=2,edgecolor='k',fill=0)
         ax.add_patch(rectDet)
-    
+        
     correct = a+b
     incorrect = c+d
     score = correct/(correct+incorrect)

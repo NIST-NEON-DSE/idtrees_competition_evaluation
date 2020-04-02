@@ -101,10 +101,10 @@ def check_GT_area(GT,par):
     
     return par
     
-def RandNeon(GT,detection,im,par):
+def RandNeon(GT,detection,par):
     
     #get set for detection
-    det = get_det_indices(detection,im)
+    det = get_det_indices(detection,par)
     
     #check/modify par based on log ratio to set small area
     par = check_GT_area(GT,par) 
@@ -113,7 +113,7 @@ def RandNeon(GT,detection,im,par):
     hcorners = halo_corners(GT,par)
             
     #get sets for each halo
-    halos = get_halo_indices(hcorners,im)
+    halos = get_halo_indices(hcorners,par)
     
     #if detection contains outside of edge, extend edge halo
     if det.difference(halos['edge']):

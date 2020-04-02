@@ -1,30 +1,25 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Mar 24 15:52:00 2020
+Created on Thu Apr  2 14:09:47 2020
 
 @author: d.stewart
+04/02/2020 - Dylan Stewart
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as pat
-import scipy.io as sio
-from PIL import Image
 
-im = Image.open('C:\\Users\\d.stewart\\NAVYREPO\\2020_NEON_Competition\\idtrees_competition_evaluation\\SJER_012.tif')
-GT = sio.loadmat('C:\\Users\\d.stewart\\NAVYREPO\\2020_NEON_Competition\\idtrees_competition_evaluation\\SJER12GT.mat')
-GT = GT['GT'][0].astype(int)
 
 def halo_parameters():
+    
     par = {}
     par['inner'] = 1 #usually 1  
     par['outer'] = 1 #usually 1-5
     par['edge'] = 2 #usually 2-10
-    par['plot'] = 1 #plot the halos
     par['area'] = 1000 #min area for scaling the parameters
+    par['plot'] = np.array([400,400]).astype(int) #size of each plot
     return par
 
-def halo_corners(GT,im,par):
+def halo_corners(GT,par):
 
     #plot the inner halo
     innerCo = np.array([GT[0]+par['inner'],GT[1]+par['inner'],GT[2]-2*par['inner'],GT[3]-2*par['inner']])
@@ -34,81 +29,67 @@ def halo_corners(GT,im,par):
     
     #plot the edge halo
     edgeCo = np.array([GT[0]-par['edge'],GT[1]-par['edge'],GT[2]+2*par['edge'],GT[3]+2*par['edge']])
-  
-    
-    
-    #plot the boxes
-    if par['plot']:
-        fig,ax = plt.subplots(1)
-        plt.imshow(im)
-        
-        #get GT rectangle
-        rectGT = pat.Rectangle((GT[0],GT[1]),GT[2],GT[3],linewidth=2,edgecolor='r',fill=0)
-        ax.add_patch(rectGT)
-        
-        #inner
-        rectIn = pat.Rectangle((innerCo[0],innerCo[1]),innerCo[2],innerCo[3],linewidth=2,edgecolor='m',fill=0)
-        ax.add_patch(rectIn)
-        
-        # outer
-        rectOut = pat.Rectangle((outerCo[0],outerCo[1]),outerCo[2],outerCo[3],linewidth=2,edgecolor='tab:purple',fill=0)
-        ax.add_patch(rectOut)
-        
-        #edge
-        rectEdge = pat.Rectangle((edgeCo[0],edgeCo[1]),edgeCo[2],edgeCo[3],linewidth=2,edgecolor='tab:blue',fill=0)
-        ax.add_patch(rectEdge)
-    
+      
     corners = {}
     corners['inner'] = innerCo
     corners['outer'] = outerCo
     corners['edge'] = edgeCo
-    return corners,ax
+    
+    return corners
 
-def get_halo_indices(corners,im):
+def get_halo_indices(corners,par):
     
     halo_indices = {}
     
-    #get inner
+    #get inner corners
     inxywh = corners['inner']
+    
+    #get span of the box
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
+    
+    #convert to indices
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,np.size(im))
+    indices = np.ravel_multi_index(XY,par['plot'],mode='clip')
     halo_indices['inner'] = set(indices)
     
-    #get outer
+    #get outer corners
     inxywh = corners['outer']
+    
+    #get span of box
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
+   
+    #convert to indices
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,np.size(im))
+    indices = np.ravel_multi_index(XY,par['plot'],mode='clip')
     halo_indices['outer'] = set(indices)
     
-    #get edge
+    #get edge corners
     inxywh = corners['edge']
+    
+    #get span of the box
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
+    
+    #convert to indices    
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,np.size(im))
+    indices = np.ravel_multi_index(XY,par['plot'],mode='clip')
     halo_indices['edge'] = set(indices)
     
     return halo_indices
-
-
-def TestDet():
-    return np.array([100,170,150,160])
-#    return np.array([125,30,30,40])
-#    return GT
     
-def get_det_indices(det):
+def get_det_indices(det,par):
+    
     x = np.arange(det[0], det[0]+det[2], 1)
     y = np.arange(det[1], det[1]+det[3], 1)
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,np.size(im))
+    indices = np.ravel_multi_index(XY,par['plot'],mode='clip')
+    
     return set(indices)
 
 def check_GT_area(GT,par):
@@ -117,20 +98,19 @@ def check_GT_area(GT,par):
         scaling = int(np.round(np.log(GT_area/par['area'])))
         par['outer'] = scaling*par['outer']
         par['edge'] = scaling*par['edge']
+    
     return par
     
-    
-
 def RandNeon(GT,detection,im,par):
     
     #get set for detection
-    det = get_det_indices(detection)
+    det = get_det_indices(detection,im)
     
     #check/modify par based on log ratio to set small area
     par = check_GT_area(GT,par) 
-    print(par)
+    
     #get halos
-    hcorners,ax = halo_corners(GT,im,par)
+    hcorners = halo_corners(GT,par)
             
     #get sets for each halo
     halos = get_halo_indices(hcorners,im)
@@ -138,7 +118,6 @@ def RandNeon(GT,detection,im,par):
     #if detection contains outside of edge, extend edge halo
     if det.difference(halos['edge']):
         halos['edge']=halos['edge'].union(det)
-#        print("Extending edge halo")
     
     #compute a
     a_set = det.intersection(halos['inner'])
@@ -162,30 +141,4 @@ def RandNeon(GT,detection,im,par):
     incorrect = c+d
     score = correct/(correct+incorrect)
     
-     #plot detection
-    if par['plot']:
-        rectDet = pat.Rectangle((detection[0],detection[1]),detection[2],detection[3],linewidth=2,edgecolor='k',fill=0)
-        ax.add_patch(rectDet)
-        plt.title('a= '+str(a)+', b = '+str(b)+', c= '+str(c)+', d= '+str(d)+'\n'+'Rand= '+str(np.round(score,2)),fontsize=10)
-    
     return score
-    
-#Test Rand scores
-xs = np.arange(110,160,1,dtype=int)
-ys = np.arange(180,250,1,dtype=int)
-ws = np.arange(70,140,1,dtype=int)
-hs = np.arange(70,140,1,dtype=int)
-
-K = 20
-Xk = []
-Scores = np.zeros((K,1))
-for k in range(K):
-    par = halo_parameters()
-    xc = np.random.choice(len(xs))
-    yc = np.random.choice(len(ys))
-    wc = np.random.choice(len(ws))
-    hc = np.random.choice(len(hs))
-    det = np.array([xs[xc],ys[yc],ws[wc],hs[hc]]).astype(int)
-    Xk.append(det)
-    Scores[k] = RandNeon(GT,det,im,par)
-    

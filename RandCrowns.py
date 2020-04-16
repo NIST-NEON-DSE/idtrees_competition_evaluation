@@ -1,23 +1,55 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Apr  2 14:09:47 2020
+@author: Dylan Stewart
+updated: 04/16/2020
+    
+    input variables:
+        GroundTruthBox - numpy array [x y width height]
+        DetectionBox   - numpy array [x y width height]
+    
+    output:
+        score - float
 
-@author: d.stewart
-04/02/2020 - Dylan Stewart
+to use this code:    
+
+    from RandCrowns import halo_parameters
+    from RandCrowns import RandNeon
+    
+    *if you want to see the plots of the halos
+    par = halo_parameters()
+    par['im'] = (plot you are using 200x200 for IDTrees Competition)
+    score = RandNeon(GroundTruthBox,DetectionBox,par)
+    this will give you the score and plot the ground truth, inner, outer,
+    and edge halos
+    
+    *to run without the plots (faster for large evaluations)
+    par = halo_parameters()
+    score = RandNeon(GroundTruthBox,DetectionBox,par)
+    this will return the score without plotting anything
+    
 """
 
 import numpy as np
-
+import matplotlib.pyplot as plt
+import matplotlib.patches as pat
 
 def halo_parameters():
-    
     par = {}
     par['inner'] = 1 #usually 1  
     par['outer'] = 1 #usually 1-5
     par['edge'] = 2 #usually 2-10
-    par['area'] = 1000 #min area for scaling the parameters
-    par['plot'] = np.array([400,400]).astype(int) #size of each plot
+    par['plot'] = 1 #plot the halos
+    par['area'] = np.array([200,200]).astype(int) #min area for scaling the parameters
+#    par['im'] add image to parameters for plotting
     return par
+
+def get_det_indices(det,par):
+    x = np.arange(det[0], det[0]+det[2], 1)
+    y = np.arange(det[1], det[1]+det[3], 1)
+    X,Y = np.meshgrid(x,y)
+    XY=np.array([X.flatten(),Y.flatten()])
+    indices = np.ravel_multi_index(XY,par['area'])
+    return set(indices)
 
 def halo_corners(GT,par):
 
@@ -29,92 +61,138 @@ def halo_corners(GT,par):
     
     #plot the edge halo
     edgeCo = np.array([GT[0]-par['edge'],GT[1]-par['edge'],GT[2]+2*par['edge'],GT[3]+2*par['edge']])
-      
+  
     corners = {}
     corners['inner'] = innerCo
     corners['outer'] = outerCo
     corners['edge'] = edgeCo
     
+    #plot the boxes
+    if par['plot']:
+        fig,ax = plt.subplots(1)
+        plt.imshow(par['im'])
+        
+        #get GT rectangle
+        rectGT = pat.Rectangle((GT[0],GT[1]),GT[2],GT[3],linewidth=2,edgecolor='r',fill=0)
+        ax.add_patch(rectGT)
+        
+        #inner
+        rectIn = pat.Rectangle((innerCo[0],innerCo[1]),innerCo[2],innerCo[3],linewidth=2,edgecolor='m',fill=0)
+        ax.add_patch(rectIn)
+        
+        # outer
+        rectOut = pat.Rectangle((outerCo[0],outerCo[1]),outerCo[2],outerCo[3],linewidth=2,edgecolor='tab:purple',fill=0)
+        ax.add_patch(rectOut)
+        
+        #edge
+        rectEdge = pat.Rectangle((edgeCo[0],edgeCo[1]),edgeCo[2],edgeCo[3],linewidth=2,edgecolor='tab:blue',fill=0)
+        ax.add_patch(rectEdge)
+        
+        corners['ax'] = ax
+        corners['fig'] = fig
+    
     return corners
+    
+
+def plot_corners(fig,GT,corners,par):
+    
+     #plot the inner halo
+    innerCo = np.array(corners['inner'])
+    
+    #plot the outer halo
+    outerCo = np.array(corners['outer'])
+    
+    #plot the edge halo
+    edgeCo = np.array(corners['edge'])
+    
+    plt.close(fig)
+    fig,ax = plt.subplots(1)
+    plt.imshow(par['im'])
+        
+    #get GT rectangle
+    rectGT = pat.Rectangle((GT[0],GT[1]),GT[2],GT[3],linewidth=2,edgecolor='r',fill=0)
+    ax.add_patch(rectGT)
+        
+    #inner
+    rectIn = pat.Rectangle((innerCo[0],innerCo[1]),innerCo[2],innerCo[3],linewidth=2,edgecolor='m',fill=0)
+    ax.add_patch(rectIn)
+        
+    # outer
+    rectOut = pat.Rectangle((outerCo[0],outerCo[1]),outerCo[2],outerCo[3],linewidth=2,edgecolor='tab:purple',fill=0)
+    ax.add_patch(rectOut)
+        
+    #edge
+    rectEdge = pat.Rectangle((edgeCo[0],edgeCo[1]),edgeCo[2],edgeCo[3],linewidth=2,edgecolor='tab:blue',fill=0)
+    ax.add_patch(rectEdge)
+    
+    return ax
 
 def get_halo_indices(corners,par):
     
     halo_indices = {}
     
-    #get inner corners
+    #get inner
     inxywh = corners['inner']
-    
-    #get span of the box
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
-    
-    #convert to indices
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['plot'],mode='clip')
+    indices = np.ravel_multi_index(XY,par['area'])
     halo_indices['inner'] = set(indices)
     
-    #get outer corners
+    #get outer
     inxywh = corners['outer']
-    
-    #get span of box
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
-   
-    #convert to indices
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['plot'],mode='clip')
+    indices = np.ravel_multi_index(XY,par['area'])
     halo_indices['outer'] = set(indices)
     
-    #get edge corners
+    #get edge
     inxywh = corners['edge']
-    
-    #get span of the box
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
-    
-    #convert to indices    
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['plot'],mode='clip')
+    indices = np.ravel_multi_index(XY,par['area'])
     halo_indices['edge'] = set(indices)
     
-    return halo_indices
+    #check area of edge to inner area ratio and modify edge until the ratio is 1:1
+    b_area = halo_indices['edge'].difference(halo_indices['outer'])
+    b_ratio = len(b_area)/len(halo_indices['inner'])
     
-def get_det_indices(det,par):
+    while b_ratio < 1:
+         inxywh = corners['edge']
+         inxywh[0]-=1
+         inxywh[1]-=1
+         inxywh[2]+=2
+         inxywh[3]+=2
+         x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
+         y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
+         X,Y = np.meshgrid(x,y)
+         XY=np.array([X.flatten(),Y.flatten()])
+         indices = np.ravel_multi_index(XY,par['area'])
+         halo_indices['edge'] = set(indices)
     
-    x = np.arange(det[0], det[0]+det[2], 1)
-    y = np.arange(det[1], det[1]+det[3], 1)
-    X,Y = np.meshgrid(x,y)
-    XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['plot'],mode='clip')
+        #check area of edge to inner area ratio and modify edge until the ratio is 1:1
+         b_area = halo_indices['edge'].difference(halo_indices['outer'])
+         b_ratio = len(b_area)/len(halo_indices['inner'])
     
-    return set(indices)
+    return corners, halo_indices
 
-def check_GT_area(GT,par):
-    GT_area = GT[2]*GT[3]
-    if GT_area>par['area']:
-        scaling = int(np.round(np.log(GT_area/par['area'])))
-        par['outer'] = scaling*par['outer']
-        par['edge'] = scaling*par['edge']
-    
-    return par
-    
+
 def RandNeon(GT,detection,par):
     
     #get set for detection
     det = get_det_indices(detection,par)
     
-    #check/modify par based on log ratio to set small area
-    par = check_GT_area(GT,par) 
-    
     #get halos
-    hcorners = halo_corners(GT,par)
-            
+    hcorners = halo_corners(GT,par)    
+        
     #get sets for each halo
-    halos = get_halo_indices(hcorners,par)
-    
+    corners,halos = get_halo_indices(hcorners,par)
+     
     #if detection contains outside of edge, extend edge halo
     if det.difference(halos['edge']):
         halos['edge']=halos['edge'].union(det)
@@ -140,5 +218,12 @@ def RandNeon(GT,detection,par):
     correct = a+b
     incorrect = c+d
     score = correct/(correct+incorrect)
+    
+     #plot detection
+    if par['plot']:
+        ax = plot_corners(hcorners['fig'],GT,corners,par)
+        rectDet = pat.Rectangle((detection[0],detection[1]),detection[2],detection[3],linewidth=2,edgecolor='k',fill=0)
+        ax.add_patch(rectDet)
+        plt.title('a= '+str(a)+', b = '+str(b)+', c= '+str(c)+', d= '+str(d)+'\n'+'Rand= '+str(np.round(score,2)),fontsize=10)
     
     return score

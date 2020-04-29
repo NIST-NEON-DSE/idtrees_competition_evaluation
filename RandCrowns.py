@@ -127,7 +127,7 @@ def plot_corners(fig,GT,corners,par):
     
     return ax
 
-def get_halo_indices(corners,par):
+def get_halo_indices(corners,GT,par):
     
     halo_indices = {}
     
@@ -158,26 +158,25 @@ def get_halo_indices(corners,par):
     indices = np.ravel_multi_index(XY,par['area'])
     halo_indices['edge'] = set(indices)
     
-    #check area of edge to inner area ratio and modify edge until the ratio is 1:1
-    b_area = halo_indices['edge'].difference(halo_indices['outer'])
-    b_ratio = len(b_area)/len(halo_indices['inner'])
-    
-    while b_ratio < 1:
-         inxywh = corners['edge']
-         inxywh[0]-=1
-         inxywh[1]-=1
-         inxywh[2]+=2
-         inxywh[3]+=2
-         x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
-         y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
-         X,Y = np.meshgrid(x,y)
-         XY=np.array([X.flatten(),Y.flatten()])
-         indices = np.ravel_multi_index(XY,par['area'])
-         halo_indices['edge'] = set(indices)
-    
-        #check area of edge to inner area ratio and modify edge until the ratio is 1:1
-         b_area = halo_indices['edge'].difference(halo_indices['outer'])
-         b_ratio = len(b_area)/len(halo_indices['inner'])
+    #set parameters based on area of gt box
+    W = corners['outer'][2]
+    H = corners['outer'][3]
+    C = 2*W+2*H
+    ww = GT[2]
+    hh = GT[3]
+    t = (-C+(C**2+4*ww*hh*4)**.5)/(8)
+    inxywh = corners['edge']
+    inxywh[0]-=t
+    inxywh[1]-=t
+    inxywh[2]+=2*t
+    inxywh[3]+=2*t
+    corners['edge'] = inxywh
+    x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
+    y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
+    X,Y = np.meshgrid(x,y)
+    XY=np.array([X.flatten(),Y.flatten()])
+    indices = np.ravel_multi_index(XY,par['area'])
+    halo_indices['edge'] = set(indices)
     
     return corners, halo_indices
 

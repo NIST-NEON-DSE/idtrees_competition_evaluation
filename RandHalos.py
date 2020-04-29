@@ -169,7 +169,7 @@ def RandNeon(GT,detection,im,par):
     
     return score
 
-def get_halo_indices2(corners,im):
+def get_halo_indices2(corners,GT,im):
     
     halo_indices = {}
     
@@ -205,6 +205,19 @@ def get_halo_indices2(corners,im):
     b_ratio = len(b_area)/len(halo_indices['inner'])
     print(b_ratio)
     
+    W = corners['outer'][2]
+    H = corners['outer'][3]
+    C = 2*W+2*H
+    ww = GT[2]
+    hh = GT[3]
+    t = (-C+(C**2+4*ww*hh*4)**.5)/(8)
+    inxyf = corners['outer']
+    print("before solve" + str(inxyf))
+    inxyf[0]-=t
+    inxyf[1]-=t
+    inxyf[2]+=2*t
+    inxyf[3]+=2*t 
+    print("quatsolver "+ str(inxyf))
     while b_ratio < 1:
          inxywh = corners['edge']
          inxywh[0]-=1
@@ -222,7 +235,7 @@ def get_halo_indices2(corners,im):
          b_area = halo_indices['edge'].difference(halo_indices['outer'])
          b_ratio = len(b_area)/len(halo_indices['inner'])
          print(b_ratio)
-    
+         print(inxywh)
     return corners, halo_indices
 
 def halo_corners2(GT,im,par):
@@ -307,7 +320,7 @@ def RandNeon2(GT,detection,im,par):
     hcorners,ax,fig = halo_corners2(GT,im,par)
             
     #get sets for each halo
-    corners,halos = get_halo_indices2(hcorners,im)
+    corners,halos = get_halo_indices2(hcorners,GT,im)
     
     #replot corners
     ax = plot_corners2(fig,GT,im,corners)

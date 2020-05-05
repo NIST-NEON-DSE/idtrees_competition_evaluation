@@ -51,7 +51,7 @@ def get_det_indices(det,par):
     indices = np.ravel_multi_index(XY,par['area'])
     return set(indices)
 
-def halo_corners(GT,par):
+def halo_corners(GT,im, par):
 
     #plot the inner halo
     innerCo = np.array([GT[0]+par['inner'],GT[1]+par['inner'],GT[2]-2*par['inner'],GT[3]-2*par['inner']])
@@ -70,7 +70,7 @@ def halo_corners(GT,par):
     #plot the boxes
     if par['plot']:
         fig,ax = plt.subplots(1)
-        plt.imshow(par['im'])
+        plt.imshow(im)
         
         #get GT rectangle
         rectGT = pat.Rectangle((GT[0],GT[1]),GT[2],GT[3],linewidth=2,edgecolor='r',fill=0)
@@ -94,7 +94,7 @@ def halo_corners(GT,par):
     return corners
     
 
-def plot_corners(fig,GT,corners,par):
+def plot_corners(fig,GT,corners,im):
     
      #plot the inner halo
     innerCo = np.array(corners['inner'])
@@ -107,7 +107,7 @@ def plot_corners(fig,GT,corners,par):
     
     plt.close(fig)
     fig,ax = plt.subplots(1)
-    plt.imshow(par['im'])
+    plt.imshow(im)
         
     #get GT rectangle
     rectGT = pat.Rectangle((GT[0],GT[1]),GT[2],GT[3],linewidth=2,edgecolor='r',fill=0)
@@ -136,7 +136,11 @@ def get_halo_indices(corners,GT,par):
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
+    #make sure outer halo doesn't go outside plot boundaries
+    X[X >= par['area'][0]] = par['area'][0] - 1 
+    Y[Y >= par['area'][0]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
+    XY[XY < 0] = 0
     indices = np.ravel_multi_index(XY,par['area'])
     halo_indices['inner'] = set(indices)
     
@@ -145,7 +149,11 @@ def get_halo_indices(corners,GT,par):
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
+    #make sure outer halo doesn't go outside plot boundaries
+    X[X >= par['area'][0]] = par['area'][0] - 1
+    Y[Y >= par['area'][0]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
+    XY[XY < 0] = 0
     indices = np.ravel_multi_index(XY,par['area'])
     halo_indices['outer'] = set(indices)
     
@@ -154,7 +162,11 @@ def get_halo_indices(corners,GT,par):
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
+    #make sure outer halo doesn't go outside plot boundaries
+    X[X >= par['area'][0]] = par['area'][0] - 1
+    Y[Y >= par['area'][0]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
+    XY[XY < 0] = 0
     indices = np.ravel_multi_index(XY,par['area'])
     halo_indices['edge'] = set(indices)
     
@@ -174,23 +186,27 @@ def get_halo_indices(corners,GT,par):
     x = np.arange(inxywh[0], inxywh[0]+inxywh[2], 1)
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
+    #make sure outer halo doesn't go outside plot boundaries
+    X[X >= par['area'][0]] = par['area'][0] - 1
+    Y[Y >= par['area'][0]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
+    XY[XY < 0] = 0
     indices = np.ravel_multi_index(XY,par['area'])
     halo_indices['edge'] = set(indices)
     
     return corners, halo_indices
 
 
-def RandNeon(GT,detection,par):
+def RandNeon(GT,detection,im, par):
     
     #get set for detection
     det = get_det_indices(detection,par)
     
     #get halos
-    hcorners = halo_corners(GT,par)    
+    hcorners = halo_corners(GT,im, par)    
         
     #get sets for each halo
-    corners,halos = get_halo_indices(hcorners,par)
+    corners,halos = get_halo_indices(hcorners,GT, par)
      
     #if detection contains outside of edge, extend edge halo
     if det.difference(halos['edge']):
@@ -220,7 +236,7 @@ def RandNeon(GT,detection,par):
     
      #plot detection
     if par['plot']:
-        ax = plot_corners(hcorners['fig'],GT,corners,par)
+        ax = plot_corners(hcorners['fig'],GT,corners,im)
         rectDet = pat.Rectangle((detection[0],detection[1]),detection[2],detection[3],linewidth=2,edgecolor='k',fill=0)
         ax.add_patch(rectDet)
         plt.title('a= '+str(a)+', b = '+str(b)+', c= '+str(c)+', d= '+str(d)+'\n'+'Rand= '+str(np.round(score,2)),fontsize=10)

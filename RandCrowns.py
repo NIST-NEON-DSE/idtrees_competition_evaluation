@@ -138,7 +138,7 @@ def get_halo_indices(corners,GT,par):
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
     X[X >= par['area'][0]] = par['area'][0] - 1 
-    Y[Y >= par['area'][0]] = par['area'][1] - 1
+    Y[Y >= par['area'][1]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
     XY[XY < 0] = 0
     indices = np.ravel_multi_index(XY,par['area'])
@@ -151,7 +151,7 @@ def get_halo_indices(corners,GT,par):
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
     X[X >= par['area'][0]] = par['area'][0] - 1
-    Y[Y >= par['area'][0]] = par['area'][1] - 1
+    Y[Y >= par['area'][1]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
     XY[XY < 0] = 0
     indices = np.ravel_multi_index(XY,par['area'])
@@ -164,7 +164,7 @@ def get_halo_indices(corners,GT,par):
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
     X[X >= par['area'][0]] = par['area'][0] - 1
-    Y[Y >= par['area'][0]] = par['area'][1] - 1
+    Y[Y >= par['area'][1]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
     XY[XY < 0] = 0
     indices = np.ravel_multi_index(XY,par['area'])
@@ -188,7 +188,7 @@ def get_halo_indices(corners,GT,par):
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
     X[X >= par['area'][0]] = par['area'][0] - 1
-    Y[Y >= par['area'][0]] = par['area'][1] - 1
+    Y[Y >= par['area'][1]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
     XY[XY < 0] = 0
     indices = np.ravel_multi_index(XY,par['area'])

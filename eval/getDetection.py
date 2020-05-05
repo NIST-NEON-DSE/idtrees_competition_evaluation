@@ -35,16 +35,15 @@ to use this code:
     this will give you the score and plot the ground truth, inner, outer,
     and edge halos
     
-    *to run without the plots (faster for large evaluations)
-    par = halo_parameters()
-    score = RandNeon(GroundTruthBox,DetectionBox,par)
-    this will return the score without plotting anything
-
 
 @author: sergiomarconi
 """
 
 def get_vertex_per_plot(pl):
+    import rasterio
+    import geopandas
+    import numpy as np
+    
     site = pl.split("_")[0]
     pix_per_meter = 10
     detection_path = './submission/'+site+'_submission.csv'
@@ -108,6 +107,7 @@ def get_vertex_per_plot(pl):
 def from_raster_to_img(im_pt):
     import rasterio
     import numpy as np
+    
     arr = rasterio.open(im_pt)
     arr = arr.read()
     arr = np.swapaxes(arr,0,1)
@@ -122,7 +122,10 @@ def from_raster_to_img(im_pt):
 #get list of plots to evaluate 
 def run_segmentation_evaluation():
     import glob, os
+    import numpy as np
     from scipy.optimize import linear_sum_assignment   
+    from RandCrowns import halo_parameters
+    from RandCrowns import RandNeon
     
     par = halo_parameters()
     list_plots = [os.path.basename(x) for x in glob.glob('./RS/RGB/*.tif')]
@@ -152,26 +155,4 @@ def run_segmentation_evaluation():
         plot_scores = R[row_ind, col_ind]
         evaluation.append([plot_scores]) #pl,plot_scores])
         
-    
-    
-# im_pt = "./RS/MLBS_4.tif"
-
-# obs = gdf_limits.iloc[1,:].values
-# par = halo_parameters()
-# preds = gtf_limits.iloc[1,:].values
-# im = from_raster_to_img(im_pt)
-# RandNeon(obs,preds,im,par)
-
-# for k in range(K):
-#     par = halo_parameters()
-#     xc = np.random.choice(len(xs))
-#     yc = np.random.choice(len(ys))
-#     wc = np.random.choice(len(ws))
-#     hc = np.random.choice(len(hs))
-#     det = np.array([xs[xc],ys[yc],ws[wc],hs[hc]]).astype(int)
-#     Xk.append(det)
-#     Scores[k] = RandNeon(GT,det,im,par)
-#     par = halo_parameters()
-#     Scores2[k] = RandNeon2(GT,det,im,par)
-    
     

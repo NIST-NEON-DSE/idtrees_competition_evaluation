@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 @author: Dylan Stewart
 updated: 04/16/2020
@@ -48,7 +47,7 @@ def get_det_indices(det,par):
     y = np.arange(det[1], det[1]+det[3], 1)
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['area'])
+    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
     return set(indices)
 
 def halo_corners(GT,im, par):
@@ -137,11 +136,8 @@ def get_halo_indices(corners,GT,par):
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
-    X[X >= par['area'][0]] = par['area'][0] - 1 
-    Y[Y >= par['area'][1]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
-    XY[XY < 0] = 0
-    indices = np.ravel_multi_index(XY,par['area'])
+    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
     halo_indices['inner'] = set(indices)
     
     #get outer
@@ -150,11 +146,8 @@ def get_halo_indices(corners,GT,par):
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
-    X[X >= par['area'][0]] = par['area'][0] - 1
-    Y[Y >= par['area'][1]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
-    XY[XY < 0] = 0
-    indices = np.ravel_multi_index(XY,par['area'])
+    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
     halo_indices['outer'] = set(indices)
     
     #get edge
@@ -163,11 +156,8 @@ def get_halo_indices(corners,GT,par):
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
-    X[X >= par['area'][0]] = par['area'][0] - 1
-    Y[Y >= par['area'][1]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
-    XY[XY < 0] = 0
-    indices = np.ravel_multi_index(XY,par['area'])
+    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
     halo_indices['edge'] = set(indices)
     
     #set parameters based on area of gt box
@@ -187,11 +177,8 @@ def get_halo_indices(corners,GT,par):
     y = np.arange(inxywh[1], inxywh[1]+inxywh[3], 1)
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
-    X[X >= par['area'][0]] = par['area'][0] - 1
-    Y[Y >= par['area'][1]] = par['area'][1] - 1
     XY=np.array([X.flatten(),Y.flatten()])
-    XY[XY < 0] = 0
-    indices = np.ravel_multi_index(XY,par['area'])
+    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
     halo_indices['edge'] = set(indices)
     
     return corners, halo_indices

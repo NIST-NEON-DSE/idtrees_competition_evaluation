@@ -130,7 +130,6 @@ def run_segmentation_evaluation():
     par = halo_parameters()
     list_plots = [os.path.basename(x) for x in glob.glob('./RS/RGB/*.tif')]
     
-    
     evaluation = list()
     # get ith plot
     for pl in list_plots:
@@ -150,9 +149,6 @@ def run_segmentation_evaluation():
                 R[obs_itc, det_itc] = RandNeon(obs,preds,im,par)
         #calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
-    
         #assigned couples
         plot_scores = R[row_ind, col_ind]
         evaluation.append([plot_scores]) #pl,plot_scores])
-        
-    

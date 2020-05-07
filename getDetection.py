@@ -12,10 +12,6 @@ Created on Tue May  5 10:28:41 2020
 
 to use this code:    
 
-    from RandCrowns import halo_parameters
-    from RandCrowns import RandNeon
-    from getDetection import *
-    
     *if you want to run the evaluation for all your plots
     - save your submission file into the submission folder as *_submission.csv 
       (e.g. ./submission/OSBS_submission.csv)
@@ -26,14 +22,6 @@ to use this code:
     Run:
         
     evaluation = run_segmentation_evaluation()
-    
-    *if you want to see the plots of the halos (currently working on running 
-    the index on a single pair of observation/detection)
-    par = halo_parameters()
-    par['im'] = (plot you are using 200x200 for IDTrees Competition)
-    score = RandNeon(GroundTruthBox,DetectionBox,par)
-    this will give you the score and plot the ground truth, inner, outer,
-    and edge halos
     
 
 @author:  Dylan Stewart & Sergio Marconi & ...
@@ -70,15 +58,15 @@ def bb_intersection_over_union(boxA, boxB):
     return iou
 
 
-def get_vertex_per_plot(pl):
+def get_vertex_per_plot(pl,par):
     import rasterio
     import geopandas
     import numpy as np
     
     site = pl.split("_")[0]
     pix_per_meter = 10
-    detection_path = './submission/'+site+'_submission.csv'
-    ras_path = "./RS/RGB/" + pl 
+    detection_path = par.datadir+'submission/'+site+'_submission.csv'
+    ras_path = par.datadir+ 'RS/RGB/' + pl 
     #read plot raster to extract detections within the plot boundaries
     raster = rasterio.open(ras_path)
 
@@ -87,7 +75,7 @@ def get_vertex_per_plot(pl):
         bbox=raster.bounds,
     )
     gtf = geopandas.read_file(
-        './submission/'+site+'_ground.csv',
+        par.datadir+'submission/'+site+'_ground.csv',
         bbox=raster.bounds,
     )
     # turn WTK into coordinates within in the image
@@ -151,23 +139,20 @@ def from_raster_to_img(im_pt):
 
 
 #get list of plots to evaluate 
-def run_segmentation_evaluation():
+def run_segmentation_evaluation(par):
     import glob, os
     import numpy as np
     from scipy.optimize import linear_sum_assignment   
-    from RandCrowns import halo_parameters
     from RandCrowns import RandNeon
-    from sklearn.metrics import jaccard_score
     
-    par = halo_parameters()
-    list_plots = [os.path.basename(x) for x in glob.glob('./RS/RGB/*.tif')]
+    list_plots = [os.path.basename(x) for x in glob.glob(par.data +'RS/RGB/*.tif')]
     
     evaluation_rand = list()
     evaluation_iou = list()
     # get ith plot
     for pl in list_plots:
         #get the RGB for plot ith
-        im_pt = "./RS/RGB/" + pl 
+        im_pt = par.data + "RS/RGB/" + pl 
         im = from_raster_to_img(im_pt)
         #get coordinates of groundtruth and predictions
         gdf_limits, gtf_limits = get_vertex_per_plot(pl)

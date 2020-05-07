@@ -32,7 +32,7 @@ to use these parameters:
         
     example:
         to run with data in folder F and save in folder G with standard arguments
-            args = evaluation_parameters(['--datadir','F:','--outputdir','G:'])
+            args = evaluation_parameters(['--datadir','F:/','--outputdir','G:/'])
     
 """
 import numpy as np
@@ -46,8 +46,8 @@ def evaluation_parameters(args):
         return string.split(',')
     
     #Data path and save path
-    parser.add_argument('--datadir', help='folder that holds the data', default='./eval', type=str)
-    parser.add_argument('--outputdir',help='folder that output is saved to',default='./scores',type=str)
+    parser.add_argument('--datadir', help='folder that holds the data', default='./eval/', type=str)
+    parser.add_argument('--outputdir',help='folder that output is saved to',default='./scores/',type=str)
     
     #Halo parameters
     parser.add_argument('--inner', help='number of pixels between inner halo and ground truth', default=1, type=int)
@@ -55,7 +55,7 @@ def evaluation_parameters(args):
     parser.add_argument('--edge',  help = 'initial number of pixels between edge and outer', default=1, type=int)
     
     #Output parameters
-    parser.add_argument('--plot', help='plot the halos and ground truth boxes with the score',  default=1, type=int)
+    parser.add_argument('--save', help='plot the halos and ground truth boxes with the score',  default=1, type=int)
     parser.add_argument('--area', help='size of the plot', default=np.array([200,200]), type=int)
     
     return parser.parse_args(args)

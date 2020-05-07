@@ -142,7 +142,7 @@ def get_halo_indices(corners,GT,par):
     return corners, halo_indices
 
 
-def RandNeon(GT,detection,im,pname,par):
+def RandNeon(GT,detection,im,par, pname = None):
     
     #get set for detection
     det = get_det_indices(detection,par)

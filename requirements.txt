@@ -1,6 +1,7 @@
 scipy
 matplotlib
 numpy
+pandas
 scikit-learn
 rasterio
 geopandas

@@ -117,7 +117,7 @@ def get_vertex_per_plot(pl,par):
     gdf_limits = np.floor(gdf_limits).astype(int)
     gtf_limits =  np.floor(gtf_limits).astype(int)
     
-    return(gdf_limits, gtf_limits)    
+    return(gdf_limits, gtf_limits, gtf.id)    
     
     
     
@@ -142,20 +142,23 @@ def from_raster_to_img(im_pt):
 def run_segmentation_evaluation(par):
     import glob, os
     import numpy as np
+    import pandas as pd
     from scipy.optimize import linear_sum_assignment   
-    from RandCrowns import RandNeon
+    import RandCrowns 
     
-    list_plots = [os.path.basename(x) for x in glob.glob(par.data +'RS/RGB/*.tif')]
+    list_plots = [os.path.basename(x) for x in glob.glob(par.datadir +'RS/RGB/*.tif')]
     
-    evaluation_rand = list()
-    evaluation_iou = list()
+    evaluation_rand = np.array([])
+    evaluation_iou = np.array([])
+    itc_ids = np.array([])
+
     # get ith plot
     for pl in list_plots:
         #get the RGB for plot ith
-        im_pt = par.data + "RS/RGB/" + pl 
+        im_pt = par.datadir + "RS/RGB/" + pl 
         im = from_raster_to_img(im_pt)
         #get coordinates of groundtruth and predictions
-        gdf_limits, gtf_limits = get_vertex_per_plot(pl)
+        gdf_limits, gtf_limits, itc_name = get_vertex_per_plot(pl, par)
         
         #initialize rand index maxtrix GT x Detections
         R = np.zeros((gdf_limits.shape[0], gtf_limits.shape[0]))
@@ -165,18 +168,22 @@ def run_segmentation_evaluation(par):
             for det_itc in range(gtf_limits.shape[0]):
                 preds = gtf_limits.iloc[det_itc,:].values
                 #calculate rand index
-                R[obs_itc, det_itc] = RandNeon(obs,preds,im,par)
+                R[obs_itc, det_itc] = RandNeon(obs,preds,im, par)
                 #calculate the iou
                 iou[obs_itc, det_itc] = bb_intersection_over_union(obs,preds)
-                                                                      
+                                                                  
         #calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
         #assigned couples
         plot_scores = R[row_ind, col_ind]
-        evaluation_rand.append([plot_scores]) #pl,plot_scores])
+        itc_ids = np.append(itc_ids, itc_name)
+        evaluation_rand = np.append(evaluation_rand, plot_scores) #pl,plot_scores])
         #do the same for iou
-        row_ind, col_ind = linear_sum_assignment(-iou)
+        row_ind , col_ind = linear_sum_assignment(-iou)
         plot_scores = iou[row_ind, col_ind]
-        evaluation_iou.append([plot_scores]) #pl,plot_scores])
+        evaluation_iou =  np.append(evaluation_iou, plot_scores) #pl,plot_scores])
         
-        return(evaluation_rand, evaluation_iou)
+    #concatenate the three columns and save as a csv file
+    task1_evaluation = np.c_[itc_ids, evaluation_rand, evaluation_iou]
+    pd.DataFrame(task1_evaluation, columns =['itc_id', 'rand_index','IoU']).to_csv(par.outputdir + '/task1_evaluation.csv')
+    return(evaluation_rand, evaluation_iou)

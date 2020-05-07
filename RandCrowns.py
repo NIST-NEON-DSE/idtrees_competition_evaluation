@@ -10,21 +10,15 @@ updated: 04/16/2020
         score - float
 
 to use this code:    
-
-    from RandCrowns import halo_parameters
+    from parameters import evaluation_parameters
     from RandCrowns import RandNeon
     
     *if you want to see the plots of the halos
-    par = halo_parameters()
-    par['im'] = (plot you are using 200x200 for IDTrees Competition)
+    set plot = 1 in parameters
+    
     score = RandNeon(GroundTruthBox,DetectionBox,par)
     this will give you the score and plot the ground truth, inner, outer,
-    and edge halos
-    
-    *to run without the plots (faster for large evaluations)
-    par = halo_parameters()
-    score = RandNeon(GroundTruthBox,DetectionBox,par)
-    this will return the score without plotting anything
+    and edge halo
     
 """
 
@@ -37,48 +31,24 @@ def get_det_indices(det,par):
     y = np.arange(det[1], det[1]+det[3], 1)
     X,Y = np.meshgrid(x,y)
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
+    indices = np.ravel_multi_index(XY,par.area,mode='clip')
     return set(indices)
 
 def halo_corners(GT,im, par):
 
     #plot the inner halo
-    innerCo = np.array([GT[0]+par['inner'],GT[1]+par['inner'],GT[2]-2*par['inner'],GT[3]-2*par['inner']])
+    innerCo = np.array([GT[0]+par.inner,GT[1]+par.inner,GT[2]-2*par.inner,GT[3]-2*par.inner])
     
     #plot the outer halo
-    outerCo = np.array([GT[0]-par['outer'],GT[1]-par['outer'],GT[2]+2*par['outer'],GT[3]+2*par['outer']])
+    outerCo = np.array([GT[0]-par.outer,GT[1]-par.outer,GT[2]+2*par.outer,GT[3]+2*par.outer])
     
     #plot the edge halo
-    edgeCo = np.array([GT[0]-par['edge'],GT[1]-par['edge'],GT[2]+2*par['edge'],GT[3]+2*par['edge']])
+    edgeCo = np.array([GT[0]-par.edge,GT[1]-par.edge,GT[2]+2*par.edge,GT[3]+2*par.edge])
   
     corners = {}
     corners['inner'] = innerCo
     corners['outer'] = outerCo
     corners['edge'] = edgeCo
-    
-    #plot the boxes
-    if par['plot']:
-        fig,ax = plt.subplots(1)
-        plt.imshow(im)
-        
-        #get GT rectangle
-        rectGT = pat.Rectangle((GT[0],GT[1]),GT[2],GT[3],linewidth=2,edgecolor='r',fill=0)
-        ax.add_patch(rectGT)
-        
-        #inner
-        rectIn = pat.Rectangle((innerCo[0],innerCo[1]),innerCo[2],innerCo[3],linewidth=2,edgecolor='m',fill=0)
-        ax.add_patch(rectIn)
-        
-        # outer
-        rectOut = pat.Rectangle((outerCo[0],outerCo[1]),outerCo[2],outerCo[3],linewidth=2,edgecolor='tab:purple',fill=0)
-        ax.add_patch(rectOut)
-        
-        #edge
-        rectEdge = pat.Rectangle((edgeCo[0],edgeCo[1]),edgeCo[2],edgeCo[3],linewidth=2,edgecolor='tab:blue',fill=0)
-        ax.add_patch(rectEdge)
-        
-        corners['ax'] = ax
-        corners['fig'] = fig
     
     return corners
     
@@ -94,9 +64,7 @@ def plot_corners(fig,GT,corners,im):
     #plot the edge halo
     edgeCo = np.array(corners['edge'])
     
-    plt.close(fig)
     fig,ax = plt.subplots(1)
-    plt.imshow(im)
         
     #get GT rectangle
     rectGT = pat.Rectangle((GT[0],GT[1]),GT[2],GT[3],linewidth=2,edgecolor='r',fill=0)
@@ -114,7 +82,7 @@ def plot_corners(fig,GT,corners,im):
     rectEdge = pat.Rectangle((edgeCo[0],edgeCo[1]),edgeCo[2],edgeCo[3],linewidth=2,edgecolor='tab:blue',fill=0)
     ax.add_patch(rectEdge)
     
-    return ax
+    return ax,fig
 
 def get_halo_indices(corners,GT,par):
     
@@ -127,7 +95,7 @@ def get_halo_indices(corners,GT,par):
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
+    indices = np.ravel_multi_index(XY,par.area,mode='clip')
     halo_indices['inner'] = set(indices)
     
     #get outer
@@ -137,7 +105,7 @@ def get_halo_indices(corners,GT,par):
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
+    indices = np.ravel_multi_index(XY,par.area,mode='clip')
     halo_indices['outer'] = set(indices)
     
     #get edge
@@ -147,7 +115,7 @@ def get_halo_indices(corners,GT,par):
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
+    indices = np.ravel_multi_index(XY,par.area,mode='clip')
     halo_indices['edge'] = set(indices)
     
     #set parameters based on area of gt box
@@ -168,13 +136,13 @@ def get_halo_indices(corners,GT,par):
     X,Y = np.meshgrid(x,y)
     #make sure outer halo doesn't go outside plot boundaries
     XY=np.array([X.flatten(),Y.flatten()])
-    indices = np.ravel_multi_index(XY,par['area'],mode='clip')
+    indices = np.ravel_multi_index(XY,par.area,mode='clip')
     halo_indices['edge'] = set(indices)
     
     return corners, halo_indices
 
 
-def RandNeon(GT,detection,im, par):
+def RandNeon(GT,detection,im,pname,par):
     
     #get set for detection
     det = get_det_indices(detection,par)
@@ -212,10 +180,12 @@ def RandNeon(GT,detection,im, par):
     score = correct/(correct+incorrect)
     
      #plot detection
-    if par['plot']:
-        ax = plot_corners(hcorners['fig'],GT,corners,im)
+    if par.save and pname is ~None:
+        ax,fig = plot_corners(hcorners['fig'],GT,corners,im)
         rectDet = pat.Rectangle((detection[0],detection[1]),detection[2],detection[3],linewidth=2,edgecolor='k',fill=0)
         ax.add_patch(rectDet)
+        ax.plot(im)
         plt.title('a= '+str(a)+', b = '+str(b)+', c= '+str(c)+', d= '+str(d)+'\n'+'Rand= '+str(np.round(score,2)),fontsize=10)
+        fig.savefig(par.outputdir+pname+'.png')
     
     return score

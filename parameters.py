@@ -52,9 +52,10 @@ def evaluation_parameters(args):
     #Halo parameters
     parser.add_argument('--inner', help='number of pixels between inner halo and ground truth', default=1, type=int)
     parser.add_argument('--outer', help='number of pixels between outer halo and ground truth', default=1, type=int)
+    parser.add_argument('--edge',  help = 'initial number of pixels between edge and outer', default=1, type=int)
     
     #Output parameters
-    parser.add_argument('--plot', help='plot the halos and ground truth boxes with the score', default=1, type=int)
+    parser.add_argument('--plot', help='plot the halos and ground truth boxes with the score',  default=1, type=int)
     parser.add_argument('--area', help='size of the plot', default=np.array([200,200]), type=int)
     
     return parser.parse_args(args)

@@ -32,16 +32,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as pat
 
-def halo_parameters():
-    par = {}
-    par['inner'] = 1 #usually 1  
-    par['outer'] = 1 #usually 1-5
-    par['edge'] = 2 #usually 2-10
-    par['plot'] = 1 #plot the halos
-    par['area'] = np.array([200,200]).astype(int) #min area for scaling the parameters
-#    par['im'] add image to parameters for plotting
-    return par
-
 def get_det_indices(det,par):
     x = np.arange(det[0], det[0]+det[2], 1)
     y = np.arange(det[1], det[1]+det[3], 1)

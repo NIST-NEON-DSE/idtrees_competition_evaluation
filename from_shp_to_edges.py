@@ -54,3 +54,9 @@ gtf_limits = gtf_limits.astype(int)
 #save edges as a new csv file to be fed into the evaluation code
 gdf_limits.to_csv('./eval/'+site+'_'+plot_n+'_detections_edges.csv')
 gtf_limits.to_csv('./eval/'+site+'_'+plot_n+'_groundtruth_edges.csv')
+
+
+
+
+
+

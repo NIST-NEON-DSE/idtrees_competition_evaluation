@@ -39,6 +39,32 @@ to use this code:
 @author: sergiomarconi
 """
 
+# credits from https://gist.github.com/meyerjo/dd3533edc97c81258898f60d8978eddc
+def bb_intersection_over_union(boxA, boxB):
+    # determine the (x, y)-coordinates of the intersection rectangle
+    xA = max(boxA[0], boxB[0])
+    yA = max(boxA[1], boxB[1])
+    xB = min(boxA[2], boxB[2])
+    yB = min(boxA[3], boxB[3])
+
+    # compute the area of intersection rectangle
+    interArea = abs(max((xB - xA, 0)) * max((yB - yA), 0))
+    if interArea == 0:
+        return 0
+    # compute the area of both the prediction and ground-truth
+    # rectangles
+    boxAArea = abs((boxA[2] - boxA[0]) * (boxA[3] - boxA[1]))
+    boxBArea = abs((boxB[2] - boxB[0]) * (boxB[3] - boxB[1]))
+
+    # compute the intersection over union by taking the intersection
+    # area and dividing it by the sum of prediction + ground-truth
+    # areas - the interesection area
+    iou = interArea / float(boxAArea + boxBArea - interArea)
+
+    # return the intersection over union value
+    return iou
+
+
 def get_vertex_per_plot(pl):
     import rasterio
     import geopandas
@@ -126,11 +152,13 @@ def run_segmentation_evaluation():
     from scipy.optimize import linear_sum_assignment   
     from RandCrowns import halo_parameters
     from RandCrowns import RandNeon
+    from sklearn.metrics import jaccard_score
     
     par = halo_parameters()
     list_plots = [os.path.basename(x) for x in glob.glob('./RS/RGB/*.tif')]
     
-    evaluation = list()
+    evaluation_rand = list()
+    evaluation_iou = list()
     # get ith plot
     for pl in list_plots:
         #get the RGB for plot ith
@@ -141,14 +169,24 @@ def run_segmentation_evaluation():
         
         #initialize rand index maxtrix GT x Detections
         R = np.zeros((gdf_limits.shape[0], gtf_limits.shape[0]))
+        iou = np.zeros((gdf_limits.shape[0], gtf_limits.shape[0]))
         for obs_itc in range(gdf_limits.shape[0]):
             obs = gdf_limits.iloc[obs_itc,:].values
             for det_itc in range(gtf_limits.shape[0]):
                 preds = gtf_limits.iloc[det_itc,:].values
                 #calculate rand index
                 R[obs_itc, det_itc] = RandNeon(obs,preds,im,par)
+                #calculate the iou
+                iou[obs_itc, det_itc] = bb_intersection_over_union(obs,preds)
+                                                                      
         #calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
         #assigned couples
         plot_scores = R[row_ind, col_ind]
-        evaluation.append([plot_scores]) #pl,plot_scores])
+        evaluation_rand.append([plot_scores]) #pl,plot_scores])
+        #do the same for iou
+        row_ind, col_ind = linear_sum_assignment(-iou)
+        plot_scores = iou[row_ind, col_ind]
+        evaluation_iou.append([plot_scores]) #pl,plot_scores])
+        
+        return(evaluation_rand, evaluation_iou)

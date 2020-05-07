@@ -1,0 +1,6 @@
+scipy
+matplotlib
+numpy
+scikit-learn
+rasterio
+geopandas

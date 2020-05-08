@@ -7,21 +7,6 @@ Created on Fri May  8 13:15:23 2020
 """
 
 
-preds = pd.read_csv(par.datadir+'submission/task2_submission.csv')
-obs = pd.read_csv(par.datadir+'submission/task2_ground.csv')
-
-#get class from majority vote
-idx = preds.groupby(['ID'])['probability'].transform(max) == preds['probability']
-preds = preds[idx]
-evaluation_data = preds.merge(obs, left_on="ID", right_on="ID")
-​metrics.confusion_matrix(evaluation_data["taxonID"], evaluation_data["speciesID"])
-
-metrics.f1_score(evaluation_data["taxonID"], evaluation_data["speciesID"], average='macro')
-metrics.f1_score(evaluation_data["taxonID"], evaluation_data["speciesID"], average='micro')
-
-splist = list(evaluation_data["speciesID"].unique())
-splist.sort()
-metrics.classification_report(evaluation_data["taxonID"], evaluation_data["speciesID"])
 
 
 def run_classification_evaluation(args=None):
@@ -50,19 +35,14 @@ def run_classification_evaluation(args=None):
     confusion_matrix = ​metrics.confusion_matrix(evaluation_data["taxonID"], 
                                                  evaluation_data["speciesID"])
     
-    macro_F1 = metrics.f1_score(evaluation_data["taxonID"], 
-                                evaluation_data["speciesID"], average='macro')
-    micro_F1 = metrics.f1_score(evaluation_data["taxonID"], 
-                                evaluation_data["speciesID"], average='micro')
     classification_report = metrics.classification_report(evaluation_data["taxonID"], 
-                                                          evaluation_data["speciesID"])
+                                                          evaluation_data["speciesID"],
+                                                          output_dict=True)
     
-    sp_labels = evaluation_data["speciesID"].uni
-    print(classification_report(evaluation_data["speciesID"], 
-                                valuation_data["taxonID"], target_names=sp_labels))
-    
-    listres = [macro_F1, micro_F1,classification_report ]
-    df = pd.DataFrame(listres)
+    df = pd.DataFrame(classification_report).transpose()
+    df = df.rename(index={'macro avg': 'macro F1', 'weighted avg': 'micro F1' })
     df.to_csv(par.outputdir + '/task2_evaluation.csv')
+
+    return(df)
     
 

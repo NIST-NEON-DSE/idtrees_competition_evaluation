@@ -17,19 +17,24 @@ and `run_classification_evaluation(args)` for task 2 (species classification)
 
 
 Examples: 
-#run task 1
+
+
+# run task 1
+```python
 #outputs will be stored in the scores folder. Evaluation outputs stored in the task1_evaluation.csv file
 #save your groundtruth/evaluation set in the submission folder as *_ground.csv (e.g. ./submission/OSBS_ground.csv)
 #save your submission file into the submission folder as *_submission.csv  (e.g. ./submission/OSBS_submission.csv)
+
 #run the following code:
 args = evaluation_parameters(None)
 run_segmentation_evaluation(args)
-
-#run task 2
+```
+# run task 2
+```python
 #outputs will be stored in the scores folder. Evaluation outputs stored in the task2_evaluation.csv file
 #save your groundtruth file into the submission folder as task2_ground.csv  (e.g. ./submission/task2_ground.csv)
 #save your submission set in the submission folder as task2_submission.csv (e.g. ./submission/task2_submission.csv)
 #run the following code:
 args = evaluation_parameters(None)
 run_classification_evaluation(args)
-
+```

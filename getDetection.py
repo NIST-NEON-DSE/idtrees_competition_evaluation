@@ -145,7 +145,7 @@ def run_segmentation_evaluation(par):
     import pandas as pd
     from scipy.optimize import linear_sum_assignment   
     import RandCrowns 
-    
+    import parameters    
     list_plots = [os.path.basename(x) for x in glob.glob(par.datadir +'RS/RGB/*.tif')]
     
     evaluation_rand = np.array([])
@@ -174,6 +174,15 @@ def run_segmentation_evaluation(par):
                                                                   
         #calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
+        if par.save is 1:
+            #redo Rindex for good pairs 
+            pairs =  np.c_[row_ind, col_ind]
+            for i in range(pairs.shape[0]):
+                obs = gdf_limits.iloc[pairs[i,0],:].values
+                preds = gtf_limits.iloc[pairs[i,1],:].values
+                RandNeon(obs,preds,im, par, pname = pl)
+                
+
         #assigned couples
         plot_scores = R[row_ind, col_ind]
         itc_ids = np.append(itc_ids, itc_name)
@@ -187,3 +196,21 @@ def run_segmentation_evaluation(par):
     task1_evaluation = np.c_[itc_ids, evaluation_rand, evaluation_iou]
     pd.DataFrame(task1_evaluation, columns =['itc_id', 'rand_index','IoU']).to_csv(par.outputdir + '/task1_evaluation.csv')
     return(evaluation_rand, evaluation_iou)
+
+
+
+
+def main(args=None):
+    
+    import parameters 
+    import RandCrowns 
+    import sys
+    if args is None:
+        args = sys.argv[1:]
+    
+    args = evaluation_parameters(args)
+    run_segmentation_evaluation(args)
+    
+
+if __name__ == "__main__":
+    main()

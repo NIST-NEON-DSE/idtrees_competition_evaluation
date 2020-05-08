@@ -180,7 +180,7 @@ def RandNeon(GT,detection,im,par, pname = None):
     score = correct/(correct+incorrect)
     
      #plot detection
-    if par.save and pname is ~None:
+    if par.save and pname is not None:
         ax,fig = plot_corners(hcorners['fig'],GT,corners,im)
         rectDet = pat.Rectangle((detection[0],detection[1]),detection[2],detection[3],linewidth=2,edgecolor='k',fill=0)
         ax.add_patch(rectDet)

@@ -202,8 +202,9 @@ def run_segmentation_evaluation(par):
 
 def main(args=None):
     
-    import parameters 
-    import RandCrowns 
+    from parameters import *
+    from RandCrowns import *
+    from task_2_evaluation import *
     import sys
     if args is None:
         args = sys.argv[1:]

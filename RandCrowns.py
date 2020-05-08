@@ -53,7 +53,7 @@ def halo_corners(GT,im, par):
     return corners
     
 
-def plot_corners(fig,GT,corners,im):
+def plot_corners(GT,corners,im):
     
      #plot the inner halo
     innerCo = np.array(corners['inner'])
@@ -177,15 +177,19 @@ def RandNeon(GT,detection,im,par, pname = None):
          
     correct = a+b
     incorrect = c+d
-    score = correct/(correct+incorrect)
+    
+    if a == 0:
+        score = 0
+    else:
+        score = correct/(correct+incorrect)
     
      #plot detection
     if par.save and pname is not None:
-        ax,fig = plot_corners(hcorners['fig'],GT,corners,im)
+        ax,fig = plot_corners(GT,corners,im)
         rectDet = pat.Rectangle((detection[0],detection[1]),detection[2],detection[3],linewidth=2,edgecolor='k',fill=0)
         ax.add_patch(rectDet)
-        ax.plot(im)
+        plt.imshow(im)
         plt.title('a= '+str(a)+', b = '+str(b)+', c= '+str(c)+', d= '+str(d)+'\n'+'Rand= '+str(np.round(score,2)),fontsize=10)
-        fig.savefig(par.outputdir+pname+'.png')
-    
+        fig.savefig(par.outputdir+pname[:-4]+'.png')
+        plt.close(fig)
     return score

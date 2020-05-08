@@ -1,0 +1,14 @@
+,0
+0,0.4356060606060606
+1,0.5769230769230769
+2,"              precision    recall  f1-score   support
+
+       ACSA2       0.91      0.91      0.91        11
+        PIPA       0.83      0.83      0.83         6
+        QULA       0.00      0.00      0.00         9
+       QULA        0.00      0.00      0.00         0
+
+    accuracy                           0.58        26
+   macro avg       0.44      0.44      0.44        26
+weighted avg       0.58      0.58      0.58        26
+"

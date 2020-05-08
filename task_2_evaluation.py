@@ -23,7 +23,8 @@ splist = list(evaluation_data["speciesID"].unique())
 splist.sort()
 metrics.classification_report(evaluation_data["taxonID"], evaluation_data["speciesID"])
 
-def main(args=None):
+
+def run_classification_evaluation(args=None):
     
     # load test dataset
     import pandas as pd
@@ -56,10 +57,12 @@ def main(args=None):
     classification_report = metrics.classification_report(evaluation_data["taxonID"], 
                                                           evaluation_data["speciesID"])
     
+    sp_labels = evaluation_data["speciesID"].uni
+    print(classification_report(evaluation_data["speciesID"], 
+                                valuation_data["taxonID"], target_names=sp_labels))
+    
     listres = [macro_F1, micro_F1,classification_report ]
     df = pd.DataFrame(listres)
     df.to_csv(par.outputdir + '/task2_evaluation.csv')
     
 
-if __name__ == "__main__":
-    main()

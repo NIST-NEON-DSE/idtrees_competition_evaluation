@@ -208,9 +208,17 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
     
-    args = evaluation_parameters(args)
-    run_segmentation_evaluation(args)
-    
+    if par.task is "both":
+        args = evaluation_parameters(args)
+        run_segmentation_evaluation(args)
+        run_classification_evaluation(args)
+    if par.task is "task1":
+        args = evaluation_parameters(args)
+        run_segmentation_evaluation(args)
+    if par.task is "task2":
+        args = evaluation_parameters(args)
+        run_classification_evaluation(args)
+
 
 if __name__ == "__main__":
     main()

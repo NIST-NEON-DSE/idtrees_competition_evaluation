@@ -13,3 +13,7 @@ and `run_classification_evaluation(args)` for task 2 (species classification)
 - ./eval/RS/RGB folder: contains RGB data that will be used to determine withi detections to evaluate for each plot
 - ./eval/submission: contains groundtruth and predictions spatial data (multipolygons with coordinates in wtk format)
 - ./scores: stores the outputs of the evaluation. Default is storing evaluation metrics as `csv`. Flagging the arguments parameter `save` to 1 in `parameters.py` will also save the plot of groundtruth - detection pairs selected by the hungarian algorithm.
+
+
+Example: 
+# run task 1

@@ -145,8 +145,6 @@ def run_segmentation_evaluation(par):
     import numpy as np
     import pandas as pd
     from scipy.optimize import linear_sum_assignment   
-    import RandCrowns 
-    import parameters    
     list_plots = [os.path.basename(x) for x in glob.glob(par.datadir +'RS/RGB/*.tif')]
     
     evaluation_rand = np.array([])
@@ -175,7 +173,7 @@ def run_segmentation_evaluation(par):
                                                                   
         #calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
-        if par.save is 1:
+        if par.save == 1:
             #redo Rindex for good pairs 
             pairs =  np.c_[row_ind, col_ind]
             for i in range(pairs.shape[0]):

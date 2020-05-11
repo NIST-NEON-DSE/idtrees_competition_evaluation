@@ -9,9 +9,6 @@ you can run the evaluation for both tasks by running the `main(args)` function,
 or by calling `run_segmentation_evaluation(args)` for evaluation of task 1  (detection and segmentation)
 and `run_classification_evaluation(args)` for task 2 (species classification)
 
-### Requirements
-- tested on python = 3.6
-
 ## Installation
 ### 1) initialize a repo in desired folder
 ```
@@ -21,16 +18,11 @@ git init --bare
 ```
 git clone https://github.com/NIST-NEON-DSE/idtrees_competition_evaluation.git
 ```
-### 3) initialize environment
+### 3) initialize environment with requirements
 ```
-conda create --name idtrees python=3.6
+conda create --name idtrees --file requirements.txt
 conda activate idtrees #possible to use source activate idtrees
 ```
-### 4) install requirements
-```
-pip install -r requirements.txt
-```
-
 *Data for evaluation should be stored as follow:*
 - ./eval/RS/RGB folder: contains RGB data that will be used to determine withi detections to evaluate for each plot
 - ./eval/submission: contains groundtruth and predictions spatial data (multipolygons with coordinates in wtk format)
@@ -47,7 +39,7 @@ Examples:
 #save your groundtruth/evaluation set in the submission folder as *_ground.csv (e.g. ./submission/OSBS_ground.csv)
 #save your submission file into the submission folder as *_submission.csv  (e.g. ./submission/OSBS_submission.csv)
 
-#run the following code:
+#run the following code in a pyhon IDE:
 args = evaluation_parameters(None)
 run_segmentation_evaluation(args)
 ```

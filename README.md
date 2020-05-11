@@ -9,6 +9,12 @@ you can run the evaluation for both tasks by running the `main(args)` function,
 or by calling `run_segmentation_evaluation(args)` for evaluation of task 1  (detection and segmentation)
 and `run_classification_evaluation(args)` for task 2 (species classification)
 
+# installation
+'''python
+initialize a repo in desired folder: git init --bare
+clone repo to the folder           : git clone https://github.com/NIST-NEON-DSE/idtrees_competition_evaluation.git
+
+
 *Data for evaluation should be stored as follow:*
 - ./eval/RS/RGB folder: contains RGB data that will be used to determine withi detections to evaluate for each plot
 - ./eval/submission: contains groundtruth and predictions spatial data (multipolygons with coordinates in wtk format)

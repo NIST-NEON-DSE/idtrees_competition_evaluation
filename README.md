@@ -46,12 +46,16 @@ main.py
 #### Demo
 ```python
 #run the following code:
+from parameters import *
+from task_1_evaluation import *
 args = evaluation_parameters(None)
 run_segmentation_evaluation(args)
 ```
 #### with arguments
 ```python
 #run the following code:
+from parameters import *
+from task_1_evaluation import *
 args = evaluation_parameters(['--datadir',pathtodata,'--outputdir',pathtosave,...])
 run_segmentation_evaluation(args)
 ```
@@ -73,12 +77,16 @@ python main.py --datadir "folderpath" --outputdir "folderpath" --task "task1" --
 #### Demo
 ```python
 #run the following code:
+from parameters import *
+from task_2_evaluation import *
 args = evaluation_parameters(None)
 run_classification_evaluation(args)
 ```
 #### with arguments
 ```python
 #run the following code:
+from parameters import *
+from task_1_evaluation import *
 args = evaluation_parameters(['--datadir',pathtodata,'--outputdir',pathtosave,...])
 run_classification_evaluation(args)
 ```

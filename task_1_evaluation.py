@@ -181,14 +181,19 @@ def run_segmentation_evaluation(par):
                 preds = gtf_limits.iloc[pairs[i,1],:].values
                 tmp = RandNeon(obs,preds,im, par, pname = str(i)+"_"+pl)
                 
-
         #assigned couples
-        plot_scores = R[row_ind, col_ind].T
+        foo = R[row_ind, col_ind]
+        plot_scores = np.zeros(gtf_limits.shape[0])
+        plot_scores[col_ind] = foo
+        
         itc_ids = np.append(itc_ids, itc_name)
         evaluation_rand = np.append(evaluation_rand, plot_scores) #pl,plot_scores])
         #do the same for iou
         row_ind , col_ind = linear_sum_assignment(-iou)
-        plot_scores = iou[row_ind, col_ind].T
+        foo = iou[row_ind, col_ind]
+        plot_scores = np.zeros(gtf_limits.shape[0])
+        plot_scores[col_ind] = foo
+        
         evaluation_iou =  np.append(evaluation_iou, plot_scores) #pl,plot_scores])
         
     #concatenate the three columns and save as a csv file

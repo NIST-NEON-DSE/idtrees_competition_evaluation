@@ -9,17 +9,6 @@ you can run the evaluation for both tasks by running the `main(args)` function,
 or by calling `run_segmentation_evaluation(args)` for evaluation of task 1  (detection and segmentation)
 and `run_classification_evaluation(args)` for task 2 (species classification)
 
-### Requirements
-- tested on python = 3.6
-#### Packages
-- scipy
-- matplotlib
-- numpy
-- pandas
-- scikit-learn
-- rasterio
-- geopandas
-
 ## Installation
 ### 1) initialize a repo in desired folder
 ```

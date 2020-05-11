@@ -9,16 +9,25 @@ you can run the evaluation for both tasks by running the `main(args)` function,
 or by calling `run_segmentation_evaluation(args)` for evaluation of task 1  (detection and segmentation)
 and `run_classification_evaluation(args)` for task 2 (species classification)
 
-## Installation
-```
-initialize a repo in desired folder: git init --bare
-clone repo to the folder           : git clone https://github.com/NIST-NEON-DSE/idtrees_competition_evaluation.git
-```
 ### Requirements
 - tested on python = 3.6
+
+## Installation
+### 1) initialize a repo in desired folder
+```
+git init --bare
+ ```
+### 2) clone repo to folder
+```
+git clone https://github.com/NIST-NEON-DSE/idtrees_competition_evaluation.git
+```
+### 3) initialize environment
 ```
 conda create --name idtrees python=3.6
 conda activate idtrees #possible to use source activate idtrees
+```
+### 4) install requirements
+```
 pip install -r requirements.txt
 ```
 

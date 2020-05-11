@@ -26,6 +26,7 @@ to use this code:
 
 @author:  Dylan Stewart & Sergio Marconi & ...
 """
+from RandCrowns import RandNeon
 
 # slightly modified from https://gist.github.com/meyerjo/dd3533edc97c81258898f60d8978eddc
 def bb_intersection_over_union(boxA, boxB):
@@ -196,30 +197,3 @@ def run_segmentation_evaluation(par):
     task1_evaluation = np.c_[itc_ids, evaluation_rand, evaluation_iou]
     pd.DataFrame(task1_evaluation, columns =['itc_id', 'rand_index','IoU']).to_csv(par.outputdir + '/task1_evaluation.csv')
     return(evaluation_rand, evaluation_iou)
-
-
-
-
-def main(args=None):
-    
-    from parameters import *
-    from RandCrowns import *
-    from task_2_evaluation import *
-    import sys
-    if args is None:
-        args = sys.argv[1:]
-    
-    if par.task is "both":
-        args = evaluation_parameters(args)
-        run_segmentation_evaluation(args)
-        run_classification_evaluation(args)
-    if par.task is "task1":
-        args = evaluation_parameters(args)
-        run_segmentation_evaluation(args)
-    if par.task is "task2":
-        args = evaluation_parameters(args)
-        run_classification_evaluation(args)
-
-
-if __name__ == "__main__":
-    main()

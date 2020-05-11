@@ -48,7 +48,7 @@ def evaluation_parameters(args):
     #Data path and save path
     parser.add_argument('--datadir', help='folder that holds the data', default="./eval/", type=str)
     parser.add_argument('--outputdir',help='folder that output is saved to',default="./scores/",type=str)
-    parser.add_argument('--tasks',help='folder that output is saved to',default="both",type=str)
+    parser.add_argument('--task',help='folder that output is saved to',default="both",type=str)
 
     #Halo parameters
     parser.add_argument('--inner', help='number of pixels between inner halo and ground truth', default=1, type=int)

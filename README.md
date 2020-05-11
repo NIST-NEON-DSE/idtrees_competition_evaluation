@@ -4,10 +4,8 @@ Evaluation metrics for 2020 competition using NEON remote sensing data
 <h2> IDTreeS Data Science competition for identifying trees from remote sensing </h2>
 
 This repo hosts the code for running the evaluation metrics of the 2020 IDTreeS competition. 
-To run it on your local machine be sure to have installed all the requirements on your environment (see requirements.txt or follow installation instructions); 
-you can run the evaluation for both tasks by running the `main(args)` function, 
-or by calling `run_segmentation_evaluation(args)` for evaluation of task 1  (detection and segmentation)
-and `run_classification_evaluation(args)` for task 2 (species classification)
+To run it on your local machine be sure to have installed all the requirements on your environment (see `requirements.txt` or follow installation instructions); 
+you can run the evaluation for both tasks by running the `main(args)` function (`main.py`), for other cases see Examples.
 
 ## Installation
 ### 1) initialize a repo in desired folder
@@ -30,43 +28,61 @@ conda activate idtrees #possible to use source activate idtrees
 
 
 
-Examples: 
-# Run Demo
+## Examples:
+## Run Demo
 ```python
 main.py
 ```
 
-# Run task 1
+## Run task 1
 - Task 1 can be exectuted in an (a) IDE or (b) in console.
 
-## a) In python IDE
+### a) In python IDE
 ```python
 #outputs will be stored in the scores folder. Evaluation outputs stored in the task1_evaluation.csv file
 #save your groundtruth/evaluation set in the submission folder as *_ground.csv (e.g. ./submission/OSBS_ground.csv)
 #save your submission file into the submission folder as *_submission.csv  (e.g. ./submission/OSBS_submission.csv)
-
+```
+#### Demo
+```python
 #run the following code:
 args = evaluation_parameters(None)
 run_segmentation_evaluation(args)
 ```
-## b) In console
+#### with arguments
+```python
+#run the following code:
+args = evaluation_parameters(['--datadir',pathtodata,'--outputdir',pathtosave,...])
+run_segmentation_evaluation(args)
+```
+
+### b) In console
 ```
 python main.py --datadir "folderpath" --outputdir "folderpath" --task "task1" --save 0
 ```
 
-# Run task 2
+## Run task 2
 - Task 2 can be exectuted in an (a) IDE or (b) in console.
 
-## a) In python IDE
+### a) In python IDE
 ```python
 #outputs will be stored in the scores folder. Evaluation outputs stored in the task2_evaluation.csv file
 #save your groundtruth file into the submission folder as task2_ground.csv  (e.g. ./submission/task2_ground.csv)
 #save your submission set in the submission folder as task2_submission.csv (e.g. ./submission/task2_submission.csv)
+```
+#### Demo
+```python
 #run the following code:
 args = evaluation_parameters(None)
 run_classification_evaluation(args)
 ```
-## b) In console
+#### with arguments
+```python
+#run the following code:
+args = evaluation_parameters(['--datadir',pathtodata,'--outputdir',pathtosave,...])
+run_classification_evaluation(args)
+```
+### b) In console
 ```
 python main.py --datadir "folderpath" --outputdir "folderpath" --task "task2"
 ```

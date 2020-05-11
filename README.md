@@ -11,6 +11,14 @@ and `run_classification_evaluation(args)` for task 2 (species classification)
 
 ### Requirements
 - tested on python = 3.6
+#### Packages
+- scipy
+- matplotlib
+- numpy
+- pandas
+- scikit-learn
+- rasterio
+- geopandas
 
 ## Installation
 ### 1) initialize a repo in desired folder

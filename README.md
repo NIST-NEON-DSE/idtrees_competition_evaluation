@@ -4,7 +4,7 @@ Evaluation metrics for 2020 competition using NEON remote sensing data
 <h2> IDTreeS Data Science competition for identifying trees from remote sensing </h2>
 
 This repo hosts the code for running the evaluation metrics of the 2020 IDTreeS competition. 
-To run it on your local machine be sure to have installed all the requirements on your environment; 
+To run it on your local machine be sure to have installed all the requirements on your environment (see requirements.txt or follow installation instructions); 
 you can run the evaluation for both tasks by running the `main(args)` function, 
 or by calling `run_segmentation_evaluation(args)` for evaluation of task 1  (detection and segmentation)
 and `run_classification_evaluation(args)` for task 2 (species classification)
@@ -31,11 +31,15 @@ conda activate idtrees #possible to use source activate idtrees
 
 
 Examples: 
+# Run Demo
+```python
+main.py
+```
 
+# Run task 1
+- Task 1 can be exectuted in an (a) IDE or (b) in console.
 
-# run task 1
-
-## In python IDE
+## a) In python IDE
 ```python
 #outputs will be stored in the scores folder. Evaluation outputs stored in the task1_evaluation.csv file
 #save your groundtruth/evaluation set in the submission folder as *_ground.csv (e.g. ./submission/OSBS_ground.csv)
@@ -45,12 +49,15 @@ Examples:
 args = evaluation_parameters(None)
 run_segmentation_evaluation(args)
 ```
-## In console
+## b) In console
 ```
 python main.py --datadir "folderpath" --outputdir "folderpath" --task "task1" --save 0
 ```
 
-# run task 2
+# Run task 2
+- Task 2 can be exectuted in an (a) IDE or (b) in console.
+
+## a) In python IDE
 ```python
 #outputs will be stored in the scores folder. Evaluation outputs stored in the task2_evaluation.csv file
 #save your groundtruth file into the submission folder as task2_ground.csv  (e.g. ./submission/task2_ground.csv)
@@ -58,4 +65,8 @@ python main.py --datadir "folderpath" --outputdir "folderpath" --task "task1" --
 #run the following code:
 args = evaluation_parameters(None)
 run_classification_evaluation(args)
+```
+## b) In console
+```
+python main.py --datadir "folderpath" --outputdir "folderpath" --task "task2"
 ```

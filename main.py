@@ -5,7 +5,7 @@ Created on Mon May 11 12:21:33 2020
 @author: Sergio Marconi and Dylan Stewart
 """
 from parameters import evaluation_parameters
-from getDetection import run_segmentation_evaluation
+from task_1_evaluation import run_segmentation_evaluation
 from task_2_evaluation import run_classification_evaluation
 
 def main(args=None):

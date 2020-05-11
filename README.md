@@ -39,7 +39,7 @@ Examples:
 #save your groundtruth/evaluation set in the submission folder as *_ground.csv (e.g. ./submission/OSBS_ground.csv)
 #save your submission file into the submission folder as *_submission.csv  (e.g. ./submission/OSBS_submission.csv)
 
-#run the following code:
+#run the following code in a pyhon IDE:
 args = evaluation_parameters(None)
 run_segmentation_evaluation(args)
 ```

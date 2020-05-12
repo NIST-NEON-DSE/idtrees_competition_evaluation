@@ -1,4 +1,4 @@
-fiona
+geopandas
 rasterio
 affine==2.3.0
 attrs==19.3.0

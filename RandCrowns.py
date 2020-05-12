@@ -190,6 +190,6 @@ def RandNeon(GT,detection,im,par, pname = None):
         ax.add_patch(rectDet)
         plt.imshow(im)
         plt.title('a= '+str(a)+', b = '+str(b)+', c= '+str(c)+', d= '+str(d)+'\n'+'Rand= '+str(np.round(score,2)),fontsize=10)
-        fig.savefig(par.outputdir+"/imgs/"+pname[:-4]+'.png')
+        fig.savefig(par.outputdir+"imgs/"+pname[:-4]+'.png')
         plt.close(fig)
     return score

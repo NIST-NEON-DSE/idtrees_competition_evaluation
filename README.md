@@ -73,7 +73,7 @@ run_segmentation_evaluation(args)
 
 ### b) In console
 ```
-python main.py --datadir "folderpath" --outputdir "folderpath" --task "task1" --save 0
+python main.py --datadir "folderpath" --outputdir "folderpath" --task "task1" --save boolean (0 or 1)
 ```
 
 ## Run task 2

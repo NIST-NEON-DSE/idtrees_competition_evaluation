@@ -10,7 +10,7 @@ you can run the evaluation for both tasks by running the `main(args)` function (
 ## Installation
 ### 1) initialize a repo in desired folder
 ```
-git init --bare
+git init
  ```
 ### 2) clone repo to folder
 ```

@@ -21,6 +21,8 @@ git clone https://github.com/NIST-NEON-DSE/idtrees_competition_evaluation.git
 conda create --name idtrees
 conda activate idtrees #possible to use source activate idtrees
 conda install --channel conda-forge geopandas
+conda install -c conda-forge rasterio
+
 pip install -r requirements.txt
 ```
 *Data for evaluation should be stored as follow:*

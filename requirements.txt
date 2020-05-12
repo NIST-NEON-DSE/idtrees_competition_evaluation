@@ -3,11 +3,9 @@
 # platform: linux-64
 affine==2.3.0
 attrs==19.3.0
-geopandas==0.7.0
 matplotlib==3.2.1
 numpy==1.18.4
 openssl==1.1.1g
-pandas==1.0.3
 python==3.6.10
 rasterio==1.1.4
 readline==8.0

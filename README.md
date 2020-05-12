@@ -16,15 +16,22 @@ git init --bare
 ```
 git clone https://github.com/NIST-NEON-DSE/idtrees_competition_evaluation.git
 ```
-### 3) initialize environment with requirements
+### 3a) initialize environment with requirements for windows
 ```
 conda create --name idtrees
 conda activate idtrees #possible to use source activate idtrees
 conda install --channel conda-forge geopandas
 conda install -c conda-forge rasterio
 
-pip install -r requirements.txt
+pip install -r windows_requirements.txt
 ```
+### 3b) initialize environment with requirements for linux
+```
+conda create --name idtrees
+conda activate idtrees
+pip install -r linux_requirements.txt
+```
+
 *Data for evaluation should be stored as follow:*
 - ./eval/RS/RGB folder: contains RGB data that will be used to determine withi detections to evaluate for each plot
 - ./eval/submission: contains groundtruth and predictions spatial data (multipolygons with coordinates in wtk format)

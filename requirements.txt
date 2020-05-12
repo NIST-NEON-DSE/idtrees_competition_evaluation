@@ -1,6 +1,7 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: linux-64
+conda config --append channels conda-forge
 _libgcc_mutex=0.1=main
 affine=2.3.0=pypi_0
 attrs=19.3.0=pypi_0

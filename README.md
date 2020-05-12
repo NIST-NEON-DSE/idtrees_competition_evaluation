@@ -18,8 +18,10 @@ git clone https://github.com/NIST-NEON-DSE/idtrees_competition_evaluation.git
 ```
 ### 3) initialize environment with requirements
 ```
-conda create --name idtrees --file requirements.txt
+conda create --name idtrees
 conda activate idtrees #possible to use source activate idtrees
+conda install --channel conda-forge geopandas
+pip install -r requirements.txt
 ```
 *Data for evaluation should be stored as follow:*
 - ./eval/RS/RGB folder: contains RGB data that will be used to determine withi detections to evaluate for each plot

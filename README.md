@@ -24,7 +24,7 @@ conda install --channel conda-forge geopandas
 conda install -c conda-forge rasterio
 pip install -r windows_requirements.txt
 ```
-### 3b) initialize environment with requirements for linux (to be tested)
+### 3b) initialize environment with requirements for linux
 ```
 conda create --name idtrees
 conda activate idtrees

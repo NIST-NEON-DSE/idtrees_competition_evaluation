@@ -41,7 +41,7 @@ pip install -r linux_requirements.txt
 ## Examples:
 ## Run Demo
 ```python
-python main.py
+python evaluation.py
 ```
 
 ## Run task 1
@@ -57,7 +57,7 @@ python main.py
 ```python
 #run the following code:
 from parameters import *
-from task_1_evaluation import *
+from evaluation import *
 args = evaluation_parameters(None)
 run_segmentation_evaluation(args)
 ```
@@ -65,14 +65,14 @@ run_segmentation_evaluation(args)
 ```python
 #run the following code:
 from parameters import *
-from task_1_evaluation import *
+from evaluation import *
 args = evaluation_parameters(['--datadir',pathtodata,'--outputdir',pathtosave,...])
 run_segmentation_evaluation(args)
 ```
 
 ### b) In console
 ```
-python main.py --datadir "folderpath" --outputdir "folderpath" --task "task1" --save boolean (0 or 1)
+python evaluation.py --datadir "folderpath" --outputdir "folderpath" --task "task1" --save boolean (0 or 1)
 ```
 
 ## Run task 2
@@ -88,7 +88,7 @@ python main.py --datadir "folderpath" --outputdir "folderpath" --task "task1" --
 ```python
 #run the following code:
 from parameters import *
-from task_2_evaluation import *
+from evaluation import *
 args = evaluation_parameters(None)
 run_classification_evaluation(args)
 ```
@@ -96,11 +96,11 @@ run_classification_evaluation(args)
 ```python
 #run the following code:
 from parameters import *
-from task_2_evaluation import *
+from evaluation import *
 args = evaluation_parameters(['--datadir',pathtodata,'--outputdir',pathtosave,...])
 run_classification_evaluation(args)
 ```
 ### b) In console
 ```
-python main.py --datadir "folderpath" --outputdir "folderpath" --task "task2"
+python evaluation.py --datadir "folderpath" --outputdir "folderpath" --task "task2"
 ```

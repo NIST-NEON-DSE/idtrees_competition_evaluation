@@ -96,7 +96,7 @@ run_classification_evaluation(args)
 ```python
 #run the following code:
 from parameters import *
-from task_1_evaluation import *
+from task_2_evaluation import *
 args = evaluation_parameters(['--datadir',pathtodata,'--outputdir',pathtosave,...])
 run_classification_evaluation(args)
 ```

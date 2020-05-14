@@ -7,3 +7,4 @@ numpy
 scikit-learn
 scipy
 shapely
+tqdm

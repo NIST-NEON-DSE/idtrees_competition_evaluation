@@ -177,11 +177,11 @@ def RandNeon(GT,detection,im,par, pname = None):
     d_set = halos['inner'].difference(det)
     d = len(d_set)**2
          
-    correct = a+b
-    incorrect = c+d
+    correct = float(a+b)
+    incorrect = float(c+d)
     
     if a == 0:
-        score = 0
+        score = 0.0
     else:
         score = correct/(correct+incorrect)
     

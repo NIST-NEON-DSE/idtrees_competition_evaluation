@@ -179,7 +179,7 @@ def run_segmentation_evaluation(par):
             for i in range(pairs.shape[0]):
                 obs = gdf_limits.iloc[pairs[i,0],:].values
                 preds = gtf_limits.iloc[pairs[i,1],:].values
-                tmp = RandNeon(obs,preds,im, par, pname = str(i)+"_"+pl)
+                RandNeon(obs,preds,im, par, pname = str(i)+"_"+pl)
                 
         #assigned couples
         foo = R[row_ind, col_ind]

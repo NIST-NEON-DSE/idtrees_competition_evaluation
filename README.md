@@ -41,7 +41,7 @@ pip install -r linux_requirements.txt
 ## Examples:
 ## Run Demo
 ```python
-main.py
+python main.py
 ```
 
 ## Run task 1

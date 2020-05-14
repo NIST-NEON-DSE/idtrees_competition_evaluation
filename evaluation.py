@@ -156,12 +156,12 @@ def run_segmentation_evaluation(par):
     evaluation_iou = np.array([])
     itc_ids = np.array([])
     
-    list_plots_q = tqdm(list_plots)
+    gdf1 = pd.read_csv(par.datadir+'/submission/MLBS_ground.csv')
+    gdf2 = pd.read_csv(par.datadir+'/submission/OSBS_ground.csv')
+    pbar = tqdm(total=gdf1.shape[0]+gdf2.shape[0])
+    pbar.set_description("Scoring each detection using Hungarian Algorithm")
     # get ith plot
-    for pl in list_plots_q:
-        print("Processing plot "+pl+" of "+str(len(list_plots))+" plots")
-        list_plots_q.set_description("Processing %s" % pl)
-
+    for pl in list_plots:
         #get the RGB for plot ith
         im_pt = par.datadir + "RS/RGB/" + pl 
         im = from_raster_to_img(im_pt)
@@ -171,7 +171,10 @@ def run_segmentation_evaluation(par):
         #initialize rand index maxtrix GT x Detections
         R = np.zeros((gdf_limits.shape[0], gtf_limits.shape[0]))
         iou = np.zeros((gdf_limits.shape[0], gtf_limits.shape[0]))
-        for obs_itc in tqdm(range(gdf_limits.shape[0])):
+        for obs_itc in range(gdf_limits.shape[0]):
+            pbar.update(1)
+            pbar.refresh()
+            time.sleep(0.001)
             obs = gdf_limits.iloc[obs_itc,:].values
             for det_itc in range(gtf_limits.shape[0]):
                 preds = gtf_limits.iloc[det_itc,:].values
@@ -179,18 +182,16 @@ def run_segmentation_evaluation(par):
                 R[obs_itc, det_itc] = RandNeon(obs,preds,im, par)
                 #calculate the iou
                 iou[obs_itc, det_itc] = bb_intersection_over_union(obs,preds)
-        time.sleep(0.01)                                                          
         #calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
         if par.save == 1:
             #redo Rindex for good pairs 
             pairs =  np.c_[row_ind, col_ind]
-            for i in tqdm(range(pairs.shape[0])):
-                print("Saving result "+str(i)+" of "+str(len(range(pairs.shape[0]))))
+            for i in range(pairs.shape[0]):
+#                print("Saving result "+str(i)+" of "+str(len(range(pairs.shape[0]))))
                 obs = gdf_limits.iloc[pairs[i,0],:].values
                 preds = gtf_limits.iloc[pairs[i,1],:].values
                 RandNeon(obs,preds,im, par, pname = str(i)+"_"+pl)
-                time.sleep(0.01)
         #assigned couples
         foo = R[row_ind, col_ind]
         plot_scores = np.zeros(gtf_limits.shape[0])
@@ -203,11 +204,11 @@ def run_segmentation_evaluation(par):
         foo = iou[row_ind, col_ind]
         plot_scores = np.zeros(gtf_limits.shape[0])
         plot_scores[col_ind] = foo
-        
         evaluation_iou =  np.append(evaluation_iou, plot_scores) #pl,plot_scores])
     #concatenate the three columns and save as a csv file
     task1_evaluation = np.c_[itc_ids, evaluation_rand, evaluation_iou]
     pd.DataFrame(task1_evaluation, columns =['itc_id', 'rand_index','IoU']).to_csv(par.outputdir + '/task1_evaluation.csv')
+    pbar.close()
     return(evaluation_rand, evaluation_iou)
 
 
@@ -244,7 +245,7 @@ def run_classification_evaluation(par=None):
     df = pd.DataFrame(classification_report).transpose()
     df = df.rename(index={'macro avg': 'macro F1', 'weighted avg': 'micro F1' })
     df.to_csv(par.outputdir + '/task2_evaluation.csv')
-
+    print(df)
     return(log_loss, df)
 
 def main(args=None):
@@ -252,12 +253,17 @@ def main(args=None):
         
     if par.task == "both":
         run_segmentation_evaluation(par)
+        print("Task 1 segmentation results are in "+par.outputdir+"task1_evaluation.csv")
         run_classification_evaluation(par)
+        print("Task 2 classification results are in "+par.outputdir+"task2_evaluation.csv")
     if par.task == "task1":
         run_segmentation_evaluation(par)
+        print("Task 1 segmentation results are in "+par.outputdir+"task1_evaluation.csv")
     if par.task == "task2":
         run_classification_evaluation(par)
-    
+        print("Task 2 classification results are in "+par.outputdir+"task2_evaluation.csv")
+    if par.save:
+        print("RandCrowns images are in "+par.outputdir+"imgs/*.png")
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,11 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Created on Mon May 11 12:21:33 2020
+
+@author: Sergio Marconi and Dylan Stewart
+"""
+from parameters import evaluation_parameters
+from RandCrowns import RandNeon
 """
 Created on Tue May  5 10:28:41 2020
 
@@ -21,12 +27,11 @@ to use this code:
     
     Run:
         
-    evaluation = run_segmentation_evaluation()
+    python evaluation.py
     
 
 @author:  Dylan Stewart & Sergio Marconi & ...
 """
-from RandCrowns import RandNeon
 
 # slightly modified from https://gist.github.com/meyerjo/dd3533edc97c81258898f60d8978eddc
 def bb_intersection_over_union(boxA, boxB):
@@ -137,8 +142,6 @@ def from_raster_to_img(im_pt):
     return arr[:, :, ::-1]
     
 
-
-
 #get list of plots to evaluate 
 def run_segmentation_evaluation(par):
     import glob, os
@@ -200,3 +203,55 @@ def run_segmentation_evaluation(par):
     task1_evaluation = np.c_[itc_ids, evaluation_rand, evaluation_iou]
     pd.DataFrame(task1_evaluation, columns =['itc_id', 'rand_index','IoU']).to_csv(par.outputdir + '/task1_evaluation.csv')
     return(evaluation_rand, evaluation_iou)
+
+
+def run_classification_evaluation(par=None):
+    """
+    Created on Fri May  8 13:15:23 2020
+
+    @author: sergiomarconi
+    """    
+    # load test dataset
+    import pandas as pd
+    from sklearn import metrics
+    from sklearn.metrics import log_loss
+    from sklearn.metrics import confusion_matrix
+    
+    # compute F1, cross entropy and confusion matrix
+    preds = pd.read_csv(par.datadir+'submission/task2_submission.csv')
+    obs = pd.read_csv(par.datadir+'submission/task2_ground.csv')
+    
+    # compute cross entropy
+    ce_preds = preds.pivot(index='ID', columns='taxonID', values='probability')
+    log_loss = log_loss(obs['speciesID'], ce_preds)
+    #get class from majority vote and compute F1 and confusion matrix
+    idx = preds.groupby(['ID'])['probability'].transform(max) == preds['probability']
+    preds = preds[idx]
+    evaluation_data = preds.merge(obs, left_on="ID", right_on="ID")
+    confusion_matrix = confusion_matrix(evaluation_data["taxonID"], 
+                                                 evaluation_data["speciesID"])
+    
+    classification_report = metrics.classification_report(evaluation_data["taxonID"], 
+                                                          evaluation_data["speciesID"],
+                                                          output_dict=True)
+    
+    df = pd.DataFrame(classification_report).transpose()
+    df = df.rename(index={'macro avg': 'macro F1', 'weighted avg': 'micro F1' })
+    df.to_csv(par.outputdir + '/task2_evaluation.csv')
+
+    return(log_loss, df)
+
+def main(args=None):
+    par = evaluation_parameters(args)
+        
+    if par.task == "both":
+        run_segmentation_evaluation(par)
+        run_classification_evaluation(par)
+    if par.task == "task1":
+        run_segmentation_evaluation(par)
+    if par.task == "task2":
+        run_classification_evaluation(par)
+    
+
+if __name__ == "__main__":
+    main()

@@ -176,6 +176,7 @@ def run_segmentation_evaluation(par):
             time.sleep(0.001)
         # calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
+        pbar2.close
         if par.save == 1:
             # redo Rindex for good pairs
             pairs = np.c_[row_ind, col_ind]

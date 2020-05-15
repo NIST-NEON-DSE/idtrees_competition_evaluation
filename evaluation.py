@@ -220,7 +220,14 @@ def run_segmentation_evaluation(par):
 def run_classification_evaluation(par=None):
     """
     Created on Fri May  8 13:15:23 2020
-
+    
+    inputs: 
+        - par: global parameters
+    
+    outputs:
+        - log_loss: categorical cross entropy
+        - df: report of the classification evaluation 
+        - confusion_matrix: confusion matrix of the evaluation
     @author: sergiomarconi
     """    
     # load test dataset
@@ -250,8 +257,11 @@ def run_classification_evaluation(par=None):
     df = pd.DataFrame(classification_report).transpose()
     df = df.rename(index={'macro avg': 'macro F1', 'weighted avg': 'micro F1' })
     df.to_csv(par.outputdir + '/task2_evaluation.csv')
+    print("#### Confusion matrix ####")
     print(df)
-    return(log_loss, df)
+    print("#### Cross Entropy ####")
+    print(log_loss)
+    return(log_loss, df, confusion_matrix)
 
 def main(args=None):
     par = evaluation_parameters(args)

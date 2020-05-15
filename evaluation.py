@@ -156,9 +156,10 @@ def run_segmentation_evaluation(par):
     evaluation_iou = np.array([])
     itc_ids = np.array([])
     
-    gdf1 = pd.read_csv(par.datadir+'/submission/MLBS_ground.csv')
-    gdf2 = pd.read_csv(par.datadir+'/submission/OSBS_ground.csv')
-    pbar = tqdm(total=gdf1.shape[0]+gdf2.shape[0])
+#    gdf1 = pd.read_csv(par.datadir+'/submission/MLBS_ground.csv')
+#    gdf2 = pd.read_csv(par.datadir+'/submission/OSBS_ground.csv')
+#    pbar = tqdm(total=gdf1.shape[0]+gdf2.shape[0])
+    pbar = tqdm(list_plots,position=0)
     pbar.set_description("Scoring each detection using Hungarian Algorithm")
     # get ith plot
     for pl in list_plots:
@@ -171,10 +172,9 @@ def run_segmentation_evaluation(par):
         #initialize rand index maxtrix GT x Detections
         R = np.zeros((gdf_limits.shape[0], gtf_limits.shape[0]))
         iou = np.zeros((gdf_limits.shape[0], gtf_limits.shape[0]))
-        for obs_itc in range(gdf_limits.shape[0]):
-            pbar.update(1)
-            pbar.refresh()
-            time.sleep(0.001)
+        pbar2 = tqdm(range(gdf_limits.shape[0]),position=1)
+        pbar2.set_description("Processing each detection")
+        for obs_itc in range(gdf_limits.shape[0]):    
             obs = gdf_limits.iloc[obs_itc,:].values
             for det_itc in range(gtf_limits.shape[0]):
                 preds = gtf_limits.iloc[det_itc,:].values
@@ -182,6 +182,9 @@ def run_segmentation_evaluation(par):
                 R[obs_itc, det_itc] = RandNeon(obs,preds,im, par)
                 #calculate the iou
                 iou[obs_itc, det_itc] = bb_intersection_over_union(obs,preds)
+            pbar2.update(1)
+            pbar2.refresh()
+            time.sleep(0.001)
         #calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
         if par.save == 1:
@@ -205,10 +208,12 @@ def run_segmentation_evaluation(par):
         plot_scores = np.zeros(gtf_limits.shape[0])
         plot_scores[col_ind] = foo
         evaluation_iou =  np.append(evaluation_iou, plot_scores) #pl,plot_scores])
+        pbar.update(1)
+        pbar.refresh()
+        time.sleep(0.001)
     #concatenate the three columns and save as a csv file
     task1_evaluation = np.c_[itc_ids, evaluation_rand, evaluation_iou]
     pd.DataFrame(task1_evaluation, columns =['itc_id', 'rand_index','IoU']).to_csv(par.outputdir + '/task1_evaluation.csv')
-    pbar.close()
     return(evaluation_rand, evaluation_iou)
 
 

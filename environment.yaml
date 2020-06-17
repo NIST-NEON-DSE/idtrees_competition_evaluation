@@ -1,0 +1,13 @@
+name: idtrees
+dependencies:
+ - python=3.6
+ - geopandas
+ - rasterio
+ - affine==2.3.0
+ - attrs==19.3.0
+ - matplotlib
+ - numpy
+ - scikit-learn
+ - scipy
+ - shapely
+ - tqdm

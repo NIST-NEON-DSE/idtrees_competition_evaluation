@@ -161,7 +161,7 @@ def run_segmentation_evaluation(par):
         # initialize rand index maxtrix GT x Detections
         R = np.zeros((gdf_limits.shape[0], gtf_limits.shape[0]))
         iou = np.zeros((gdf_limits.shape[0], gtf_limits.shape[0]))
-        pbar2 = tqdm(range(gdf_limits.shape[0]), position=1)
+        pbar2 = tqdm(range(gdf_limits.shape[0]), position=0,ascii=True,leave=False)
         pbar2.set_description("Processing each detection for plot "+pl)
         for obs_itc in range(gdf_limits.shape[0]):
             obs = gdf_limits.iloc[obs_itc, :].values
@@ -172,8 +172,8 @@ def run_segmentation_evaluation(par):
                 # calculate the iou
                 iou[obs_itc, det_itc] = bb_intersection_over_union(obs, preds)
             pbar2.update(1)
-            pbar2.refresh()
-            time.sleep(0.001)
+#            pbar2.refresh()
+#            time.sleep(0.001)
         # calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
         pbar2.close

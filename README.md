@@ -12,19 +12,10 @@ you can run the evaluation for both tasks by running the `main(args)` function (
 ```
 git clone https://github.com/NIST-NEON-DSE/idtrees_competition_evaluation.git
 ```
-### 2a) Initialize environment with requirements for Windows
+### 2) Initialize environment with requirements for Windows
 ```
-conda create --name idtrees
-conda activate idtrees #possible to use source activate idtrees
-conda install --channel conda-forge geopandas
-conda install -c conda-forge rasterio
-pip install -r windows_requirements.txt
-```
-### 2b) Initialize environment with requirements for Linux/MacOS
-```
-conda create --name idtrees
+conda env create -f environment.yaml
 conda activate idtrees
-pip install -r linux_requirements.txt
 ```
 
 *Data for evaluation should be stored as follow:*

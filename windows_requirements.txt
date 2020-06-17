@@ -1,8 +1,0 @@
-affine==2.3.0
-attrs==19.3.0
-matplotlib==3.2.1
-numpy==1.18.4
-scikit-learn==0.22.2.post1
-scipy==1.4.1
-shapely==1.7.0
-tqdm

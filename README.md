@@ -1,5 +1,3 @@
-[![DOI](https://zenodo.org/badge/265101910.svg)](https://zenodo.org/badge/latestdoi/265101910)
-
 # idtrees_competition_evaluation
 Evaluation metrics for 2020 IDTreeS competition using NEON remote sensing data
 
@@ -14,7 +12,7 @@ you can run the evaluation for both tasks by running the `main(args)` function (
 ```
 git clone https://github.com/NIST-NEON-DSE/idtrees_competition_evaluation.git
 ```
-### 2) Initialize environment with requirements for Windows
+### 2) Initialize environment with requirements
 ```
 conda env create -f environment.yaml
 conda activate idtrees

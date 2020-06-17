@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/265101910.svg)](https://zenodo.org/badge/latestdoi/265101910)
+
 # idtrees_competition_evaluation
 Evaluation metrics for 2020 IDTreeS competition using NEON remote sensing data
 

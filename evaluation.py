@@ -75,7 +75,8 @@ def get_vertex_per_plot(pl, par):
     site = pl.split("_")[0]
     pix_per_meter = 10
     detection_path = par.datadir + "submission/" + site + "_submission.csv"
-    ras_path = par.datadir + "RS/RGB/" + pl
+    ras_path = "./RS/RGB/" + pl
+#    ras_path = par.datadir + "RS/RGB/" + pl
     # read plot raster to extract detections within the plot boundaries
     raster = rasterio.open(ras_path)
 
@@ -145,7 +146,8 @@ def run_segmentation_evaluation(par):
     import pandas as pd
     from scipy.optimize import linear_sum_assignment
 
-    list_plots = [os.path.basename(x) for x in glob.glob(par.datadir + "RS/RGB/*.tif")]
+#    list_plots = [os.path.basename(x) for x in glob.glob(par.datadir + "RS/RGB/*.tif")]
+    list_plots = [os.path.basename(x) for x in glob.glob("./RS/RGB/*.tif")]
 
     evaluation_rand = np.array([])
     evaluation_iou = np.array([])
@@ -153,7 +155,8 @@ def run_segmentation_evaluation(par):
     # get ith plot
     for pl in list_plots:
         # get the RGB for plot ith
-        im_pt = par.datadir + "RS/RGB/" + pl
+        im_pt = "./RS/RGB/" + pl
+#        im_pt = par.datadir + "RS/RGB/" + pl
         im = from_raster_to_img(im_pt)
         # get coordinates of groundtruth and predictions
         gdf_limits, gtf_limits, itc_name = get_vertex_per_plot(pl, par)

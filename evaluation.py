@@ -219,6 +219,7 @@ def run_classification_evaluation(par=None):
     """
     # load test dataset
     import pandas as pd
+    import numpy as np
     from sklearn import metrics
     from sklearn.metrics import log_loss
     from sklearn.metrics import confusion_matrix
@@ -227,9 +228,14 @@ def run_classification_evaluation(par=None):
     preds = pd.read_csv(par.datadir + "submission/task2_submission.csv")
     obs = pd.read_csv(par.datadir + "submission/task2_ground.csv")
 
-    # compute cross entropy
+     # compute cross entropy
     ce_preds = preds.pivot(index="ID", columns="taxonID", values="probability")
-    log_loss = log_loss(obs["speciesID"], ce_preds)
+    #get name of missing species
+    missing_cols = np.setdiff1d(ce_preds.columns,obs.speciesID)
+    missing_sp = pd.DataFrame(np.zeros([ce_preds.shape[0], missing_cols.shape[0]]), columns = missing_cols)
+    ce_preds = pd.concat([ce_preds.reset_index(drop=True), missing_sp], axis=1)
+
+    log_loss = log_loss(y_true = obs["speciesID"], y_pred = ce_preds, labels = ce_preds.columns)
     # get class from majority vote and compute F1 and confusion matrix
     idx = preds.groupby(["ID"])["probability"].transform(max) == preds["probability"]
     preds = preds[idx]

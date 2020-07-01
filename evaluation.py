@@ -126,7 +126,7 @@ def from_raster_to_img(im_pt):
     arr = np.moveaxis(arr,0,-1)
     arr = arr[:,:,::-1]
 
-    return arr[:, :, ::-1]
+    return arr
 
 
 # get list of plots to evaluate

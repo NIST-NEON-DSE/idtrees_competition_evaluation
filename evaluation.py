@@ -78,7 +78,6 @@ def get_vertex_per_plot(pl, par):
     pix_per_meter = 10
     detection_path = par.datadir + "submission/" + site + "_submission.csv"
     ras_path = "./RS/RGB/" + pl
-#    ras_path = par.datadir + "RS/RGB/" + pl
     # read plot raster to extract detections within the plot boundaries
     raster = rasterio.open(ras_path)
 
@@ -136,7 +135,6 @@ def run_segmentation_evaluation(par):
     import pandas as pd
     from scipy.optimize import linear_sum_assignment
 
-#    list_plots = [os.path.basename(x) for x in glob.glob(par.datadir + "RS/RGB/*.tif")]
     list_plots = [os.path.basename(x) for x in glob.glob("./RS/RGB/*.tif")]
 
     evaluation_rand = np.array([])
@@ -165,8 +163,6 @@ def run_segmentation_evaluation(par):
                 # calculate the iou
                 iou[obs_itc, det_itc] = bb_intersection_over_union(obs, preds)
             pbar2.update(1)
-#            pbar2.refresh()
-#            time.sleep(0.001)
         # calculate the optimal matching using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(-R)
         pbar2.close
@@ -174,7 +170,6 @@ def run_segmentation_evaluation(par):
             # redo Rindex for good pairs
             pairs = np.c_[row_ind, col_ind]
             for i in range(pairs.shape[0]):
-                #                print("Saving result "+str(i)+" of "+str(len(range(pairs.shape[0]))))
                 obs = gdf_limits.iloc[pairs[i, 0], :].values
                 preds = gtf_limits.iloc[pairs[i, 1], :].values
                 RandNeon(obs, preds, im, par, pname=str(i) + "_" + pl)

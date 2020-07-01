@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/265101910.svg)](https://zenodo.org/badge/latestdoi/265101910) 
+
 # idtrees_competition_evaluation
 Evaluation metrics for 2020 IDTreeS competition using NEON remote sensing data
 
@@ -19,7 +21,7 @@ conda activate idtrees
 ```
 
 *Data for evaluation should be stored as follow:*
-- ./eval/RS/RGB folder: contains RGB data that will be used to determine which detections to evaluate for each plot
+- ./RS/RGB folder: contains RGB data that will be used to determine which detections to evaluate for each plot
 - ./eval/submission: contains groundtruth and predictions spatial data (multipolygons with coordinates in wkt format)
 - ./scores: stores the outputs of the evaluation. Default is storing evaluation metrics as `csv`. Flagging the arguments parameter `save` to 1 in `parameters.py` will also save the plot of groundtruth - detection pairs selected by the hungarian algorithm.
 

@@ -67,6 +67,7 @@ def plot_corners(GT,corners,im):
     edgeCo = np.array(corners['edge'])
     
     fig,ax = plt.subplots(1)
+    ax.invert_yaxis()
         
     #get GT rectangle
     rectGT = pat.Rectangle((GT[0],GT[1]),GT[2],GT[3],linewidth=2,edgecolor='r',fill=0)
@@ -145,7 +146,7 @@ def get_halo_indices(corners,GT,par):
 
 
 def RandNeon(GT,detection,im,par, pname = None):
-    
+   
     #get set for detection
     det = get_det_indices(detection,par)
     
@@ -190,7 +191,8 @@ def RandNeon(GT,detection,im,par, pname = None):
         ax,fig = plot_corners(GT,corners,im)
         rectDet = pat.Rectangle((detection[0],detection[1]),detection[2],detection[3],linewidth=2,edgecolor='k',fill=0)
         ax.add_patch(rectDet)
-        plt.imshow(im)
+        im = np.uint8(im)
+        plt.imshow(np.flipud(im),origin='lower')
         plt.title('a= '+str(a)+', b = '+str(b)+', c= '+str(c)+', d= '+str(d)+'\n'+'Rand= '+str(np.round(score,2)),fontsize=10)
         fig.savefig(par.outputdir+"imgs/"+pname[:-4]+'.png')
         plt.close(fig)

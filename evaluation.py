@@ -37,8 +37,10 @@ to use this code:
 """
 
 # slightly modified from https://gist.github.com/meyerjo/dd3533edc97c81258898f60d8978eddc
-def bb_intersection_over_union(boxA, boxB):
+def bb_intersection_over_union(boxAA, boxBB):
     # recalculate vertices for box a and b from length weight
+    boxA = boxAA.copy()
+    boxB = boxBB.copy()
     boxA[2] = boxA[0] + boxA[2]
     boxA[3] = boxA[1] + boxA[3]
     boxB[2] = boxB[0] + boxB[2]
@@ -109,17 +111,6 @@ def get_vertex_per_plot(pl, par):
     gtf_limits["miny"] = (gtf_limits["miny"] - ymin) * pix_per_meter
     gtf_limits.columns = ["minx", "miny", "width", "length"]
 
-    # be sure the limits don't go off the plot
-    gdf_limits[gdf_limits < 0] = 0
-    gtf_limits[gtf_limits < 0] = 0
-
-    gtf_limits["width"][gtf_limits["minx"] + gtf_limits["width"] > 200] = (
-        gtf_limits["width"][gtf_limits["minx"] + gtf_limits["width"] > 200] - 1
-    )
-    gtf_limits["length"][gtf_limits["miny"] + gtf_limits["length"] > 200] = (
-        gtf_limits["length"][gtf_limits["miny"] + gtf_limits["length"] > 200] - 1
-    )
-
     gdf_limits = np.floor(gdf_limits).astype(int)
     gtf_limits = np.floor(gtf_limits).astype(int)
 
@@ -132,10 +123,9 @@ def from_raster_to_img(im_pt):
 
     arr = rasterio.open(im_pt)
     arr = arr.read()
-    arr = np.swapaxes(arr, 0, 1)
-    arr = np.swapaxes(arr, 1, 2)
-    arr = arr.astype("int16")
-    # plt.imshow(arr)
+    arr = np.moveaxis(arr,0,-1)
+    arr = arr[:,:,::-1]
+
     return arr[:, :, ::-1]
 
 
@@ -217,6 +207,7 @@ def run_classification_evaluation(par=None):
     """
     # load test dataset
     import pandas as pd
+    import numpy as np
     from sklearn import metrics
     from sklearn.metrics import log_loss
     from sklearn.metrics import confusion_matrix
@@ -225,9 +216,14 @@ def run_classification_evaluation(par=None):
     preds = pd.read_csv(par.datadir + "submission/task2_submission.csv")
     obs = pd.read_csv(par.datadir + "submission/task2_ground.csv")
 
-    # compute cross entropy
+     # compute cross entropy
     ce_preds = preds.pivot(index="ID", columns="taxonID", values="probability")
-    log_loss = log_loss(obs["speciesID"], ce_preds)
+    #get name of missing species
+    missing_cols = np.setdiff1d(ce_preds.columns,obs.speciesID)
+    missing_sp = pd.DataFrame(np.zeros([ce_preds.shape[0], missing_cols.shape[0]]), columns = missing_cols)
+    ce_preds = pd.concat([ce_preds.reset_index(drop=True), missing_sp], axis=1)
+
+    log_loss = log_loss(y_true = obs["speciesID"], y_pred = ce_preds, labels = ce_preds.columns)
     # get class from majority vote and compute F1 and confusion matrix
     idx = preds.groupby(["ID"])["probability"].transform(max) == preds["probability"]
     preds = preds[idx]
